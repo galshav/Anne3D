@@ -2,10 +2,11 @@ package anne3D.math;
 import java.lang.RuntimeException;
 import java.util.Arrays;
 
-final public class Matrix {
-	private final int m_NumberOfRows;
-	private final int m_NumberOfColumns;
-	private final double[][] m_Data;
+public class Matrix {
+	
+	protected final int m_NumberOfRows;
+	protected final int m_NumberOfColumns;
+	protected final double[][] m_Data;
 	
 	public Matrix(final int numberOfRows, final int numberOfColumns) {
 		if (numberOfRows    <= 0 ||
