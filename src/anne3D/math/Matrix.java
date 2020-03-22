@@ -42,26 +42,27 @@ public class Matrix {
 		return Arrays.deepEquals(((Matrix)other).m_Data , this.m_Data);
 	}
 	
+
 	@SuppressWarnings("unchecked")
+	private <T extends Matrix> T createSpecificMatrixType(final T other) {
+		if (other instanceof ColumnVector) {
+			return (T) new ColumnVector(other.m_NumberOfRows);
+		}
+		
+		else if (other instanceof RowVector) {
+			return (T) new RowVector(other.m_NumberOfColumns);
+		}
+		
+		return (T) new Matrix(m_NumberOfRows, m_NumberOfColumns);
+	}
+	
 	public <T extends Matrix> T plus(final T other) {
-		if ((m_NumberOfRows != other.m_NumberOfRows) ||
+		if ((m_NumberOfRows    != other.m_NumberOfRows) ||
 			(m_NumberOfColumns != other.m_NumberOfColumns)) {
 			throw new RuntimeException("Can not add matrix with different dimensions.");
 		}
 		
-		T result;
-		if (other instanceof ColumnVector) {
-			result = (T) new ColumnVector(other.m_NumberOfRows);
-		}
-		
-		else if (other instanceof RowVector) {
-			result = (T) new RowVector(other.m_NumberOfColumns);
-		}
-		
-		else {
-			result = (T) new Matrix(m_NumberOfRows, m_NumberOfColumns);
-		}
-		
+		T result = this.createSpecificMatrixType(other);
 		for (int i = 0; i < m_NumberOfRows; ++i) {
 			for (int j = 0; j < m_NumberOfColumns; ++j) {
 				result.m_Data[i][j] = m_Data[i][j] + other.m_Data[i][j];
@@ -69,6 +70,33 @@ public class Matrix {
 		}
 		
 		return result;
+	}
+	
+	public <T extends Matrix> T minus(final T other) {
+		if ((m_NumberOfRows	   != other.m_NumberOfRows) ||
+			(m_NumberOfColumns != other.m_NumberOfColumns)) {
+				throw new RuntimeException("Can not add matrix with different dimensions.");
+		}
+		
+		T result = this.createSpecificMatrixType(other);
+		for (int i = 0; i < m_NumberOfRows; ++i) {
+			for (int j = 0; j < m_NumberOfColumns; ++j) {
+				result.m_Data[i][j] = m_Data[i][j] - other.m_Data[i][j];
+			}
+		}
+		
+		return result;
+	}
+	
+	public Matrix transpose() {
+		Matrix transposeMatrix = new Matrix(m_NumberOfColumns, m_NumberOfRows);
+		for (int i = 0; i < transposeMatrix.m_NumberOfRows; ++i) {
+			for (int j = 0; j < transposeMatrix.m_NumberOfColumns; ++j) {
+				transposeMatrix.m_Data[i][j] = m_Data[j][i];
+			}
+		}
+		
+		return transposeMatrix;
 	}
 	
 	public static Matrix identity(final int dimension) {

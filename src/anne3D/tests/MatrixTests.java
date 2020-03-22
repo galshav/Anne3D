@@ -12,8 +12,9 @@ public class MatrixTests {
 	
 	@Test
 	void matrixAdd_add2IdentityMatrices() {
-		assertEquals(new Matrix(new double[][] {{2, 0},
-												{0, 2}}),
+		assertEquals(
+				new Matrix(new double[][] {{2, 0},
+										   {0, 2}}),
 				Matrix.identity(2).plus(Matrix.identity(2)));
 	}
 	
@@ -22,6 +23,34 @@ public class MatrixTests {
 		assertThrows(RuntimeException.class, () -> {
 			Matrix.identity(2).plus(Matrix.identity(3));
 		});
+	}
+	
+	@Test
+	void matrixSubtract_subtract2DMatrices() {
+		Matrix firstMatrix = new Matrix(new double[][] {{10, 6},
+														{-1, 5}});
+		Matrix secondMatrix = new Matrix(new double[][] {{ 5,  3},
+														 {-2, -1}});
+		assertEquals(
+				new Matrix(new double[][] {{5, 3},
+										   {1, 6}}),
+				firstMatrix.minus(secondMatrix));
+	}
+	
+	@Test
+	void matrixSubtract_subtractMatricesWithDifferentDimensions() {
+		assertThrows(RuntimeException.class, () -> {
+			Matrix.identity(6).minus(Matrix.identity(3));
+		});
+	}
+	
+	@Test
+	void matrixTranspose_transpose2DMatrix() {
+		assertEquals(
+				new Matrix(new double[][]{{1, 3},
+										  {2, 4}}),
+				new Matrix(new double[][] {{1, 2},
+										   {3, 4}}).transpose());
 	}
 	
 	@Test

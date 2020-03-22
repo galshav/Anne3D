@@ -1,8 +1,5 @@
 package anne3D.tests;
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.awt.SecondaryLoop;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import anne3D.math.RowVector;
@@ -40,11 +37,45 @@ public class VectorTests {
 	}
 	
 	@Test
-	void addColumnVector_add2columnsWithDifferentDimensions_shuoldFail() {
+	void addColumnVector_add2ColumnVectorsWithDifferentDimensions_shouldFail() {
 		assertThrows(RuntimeException.class, () -> {
 			ColumnVector firstVector = new ColumnVector(new double[] {1, 1, 1});
 			ColumnVector secondVector = new ColumnVector(new double[] {1, 1, 1, 1});
 			firstVector.plus(secondVector);
+		});
+	}
+	
+	@Test
+	void addRowVector_add2Rowsolumns() {
+		assertEquals(
+				new RowVector(new double[] {1, 2, 3}),
+				(new RowVector(new double[] {0, 1, 2})
+						.plus(new RowVector(new double[] {1, 1, 1}))));
+	}
+	
+	@Test
+	void addRowVector_add2RowVectorsWithDifferentDimensions_shouldFail() {
+		assertThrows(RuntimeException.class, () -> {
+			RowVector firstVector = new RowVector(new double[] {1, 1, 1});
+			RowVector secondVector = new RowVector(new double[] {1, 1, 1, 1});
+			firstVector.plus(secondVector);
+		});
+	}
+	
+	@Test
+	void subtractRowVector_subtract2RowVectors() {
+		assertEquals(
+				new RowVector(new double[] {-1, 0, 1}),
+				(new RowVector(new double[] {0, 1, 2})
+						.minus(new RowVector(new double[] {1, 1, 1}))));
+	}
+	
+	@Test
+	void subtractRowVector_subtract2RowVectorsWithDifferentDimensions() {
+		assertThrows(RuntimeException.class, () -> {
+			RowVector firstVector = new RowVector(new double[] {1, 1, 1});
+			RowVector secondVector = new RowVector(new double[] {1, 1, 1, 1});
+			firstVector.minus(secondVector);
 		});
 	}
 }
