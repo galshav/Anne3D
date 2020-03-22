@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import anne3D.math.Matrix;
 
-class MatrixTests {
+public class MatrixTests {
 
 	@BeforeEach
 	void setUp() throws Exception {
