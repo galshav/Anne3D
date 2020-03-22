@@ -42,6 +42,35 @@ public class Matrix {
 		return Arrays.deepEquals(((Matrix)other).m_Data , this.m_Data);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public <T extends Matrix> T plus(final T other) {
+		if ((m_NumberOfRows != other.m_NumberOfRows) ||
+			(m_NumberOfColumns != other.m_NumberOfColumns)) {
+			throw new RuntimeException("Can not add matrix with different dimensions.");
+		}
+		
+		T result;
+		if (other instanceof ColumnVector) {
+			result = (T) new ColumnVector(other.m_NumberOfRows);
+		}
+		
+		else if (other instanceof RowVector) {
+			result = (T) new RowVector(other.m_NumberOfColumns);
+		}
+		
+		else {
+			result = (T) new Matrix(m_NumberOfRows, m_NumberOfColumns);
+		}
+		
+		for (int i = 0; i < m_NumberOfRows; ++i) {
+			for (int j = 0; j < m_NumberOfColumns; ++j) {
+				result.m_Data[i][j] = m_Data[i][j] + other.m_Data[i][j];
+			}
+		}
+		
+		return result;
+	}
+	
 	public static Matrix identity(final int dimension) {
 		final Matrix identity = new Matrix(dimension, dimension);
 		for (int i = 0; i < dimension; ++i) {

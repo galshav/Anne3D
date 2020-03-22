@@ -10,7 +10,10 @@ final public class Main {
 		try {
 			Logger.Info("Starting engine.");
 			ColumnVector vector = new ColumnVector(new double[] {-7, 10, 6});
+			ColumnVector res = vector.plus(new ColumnVector(new double[] {7, -10, 6}));
+			Matrix mat = vector.plus(new Matrix(new double[][] {{7},{-10},{6}}));
 			Logger.Debug("debugbreak.");
+
 		}
 		
 		catch (Exception error) {

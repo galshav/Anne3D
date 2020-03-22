@@ -9,6 +9,27 @@ public class MatrixTests {
 	@BeforeEach
 	void setUp() throws Exception {
 	}
+	
+	@Test
+	void matrixAdd_add2IdentityMatrices() {
+		assertEquals(new Matrix(new double[][] {{2, 0},
+												{0, 2}}),
+				Matrix.identity(2).plus(Matrix.identity(2)));
+	}
+	
+	@Test
+	void matrixAdd_add2DifferentDimensionsMatrices_shouldFail() {
+		assertThrows(RuntimeException.class, () -> {
+			Matrix.identity(2).plus(Matrix.identity(3));
+		});
+	}
+	
+	@Test
+	void identityMatrix_get1DIdentityMatrix_shouldFail() {
+		assertThrows(RuntimeException.class, () -> {
+			Matrix.identity(1);
+		});
+	}
 
 	@Test
 	void identityMatrix_get2DIdentityMatrix() {

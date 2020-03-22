@@ -1,5 +1,8 @@
 package anne3D.tests;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.awt.SecondaryLoop;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import anne3D.math.RowVector;
@@ -26,5 +29,22 @@ public class VectorTests {
 					{2},
 					{3}}), 
 				new ColumnVector(new double[] {1,2,3}));
+	}
+	
+	@Test
+	void addColumnVector_add2ColumnsVectors() {
+		assertEquals(
+				new ColumnVector(new double[] {2, 2, 2}),
+				(new ColumnVector(new double[] {1, 1, 1}))
+					.plus(new ColumnVector(new double[] {1, 1, 1})));
+	}
+	
+	@Test
+	void addColumnVector_add2columnsWithDifferentDimensions_shuoldFail() {
+		assertThrows(RuntimeException.class, () -> {
+			ColumnVector firstVector = new ColumnVector(new double[] {1, 1, 1});
+			ColumnVector secondVector = new ColumnVector(new double[] {1, 1, 1, 1});
+			firstVector.plus(secondVector);
+		});
 	}
 }
