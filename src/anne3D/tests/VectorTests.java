@@ -14,7 +14,8 @@ public class VectorTests {
 	@Test
 	void rowVector_createRowVectorAsMatrix() {
 		assertEquals(
-				new Matrix(new double[][] {{1, 2, 3}}),
+				new Matrix(new double[][] {
+					{1, 2, 3}}),
 				new RowVector(new double[] {1, 2, 3}));
 	}
 	
@@ -37,7 +38,7 @@ public class VectorTests {
 	}
 	
 	@Test
-	void addColumnVector_add2ColumnVectorsWithDifferentDimensions_shouldFail() {
+	void addColumnVector_add2ColumnVectorsWithDifferentDimensions_shouldThrow() {
 		assertThrows(RuntimeException.class, () -> {
 			ColumnVector firstVector = new ColumnVector(new double[] {1, 1, 1});
 			ColumnVector secondVector = new ColumnVector(new double[] {1, 1, 1, 1});
@@ -54,7 +55,7 @@ public class VectorTests {
 	}
 	
 	@Test
-	void addRowVector_add2RowVectorsWithDifferentDimensions_shouldFail() {
+	void addRowVector_add2RowVectorsWithDifferentDimensions_shouldThrow() {
 		assertThrows(RuntimeException.class, () -> {
 			RowVector firstVector = new RowVector(new double[] {1, 1, 1});
 			RowVector secondVector = new RowVector(new double[] {1, 1, 1, 1});
@@ -71,7 +72,7 @@ public class VectorTests {
 	}
 	
 	@Test
-	void subtractRowVector_subtract2RowVectorsWithDifferentDimensions() {
+	void subtractRowVector_subtract2RowVectorsWithDifferentDimensions_shouldThrow() {
 		assertThrows(RuntimeException.class, () -> {
 			RowVector firstVector = new RowVector(new double[] {1, 1, 1});
 			RowVector secondVector = new RowVector(new double[] {1, 1, 1, 1});

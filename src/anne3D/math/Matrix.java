@@ -10,8 +10,7 @@ public class Matrix {
 	
 	public Matrix(final int numberOfRows, final int numberOfColumns) {
 		if (numberOfRows    <= 0 ||
-			numberOfColumns <= 0 || 
-			(1 == numberOfRows && 1 == numberOfColumns)) {
+			numberOfColumns <= 0) {
 			throw new RuntimeException("Invalid matrix dimensions.");
 		}
 		
@@ -85,6 +84,23 @@ public class Matrix {
 			}
 		}
 		
+		return result;
+	}
+	
+	public Matrix times(final Matrix other) {
+		if (m_NumberOfColumns != other.m_NumberOfRows) {
+			throw new RuntimeException("Can not multiply matrices with illegal dimensions.");
+		}
+		
+		final Matrix result = new Matrix(m_NumberOfRows, other.m_NumberOfColumns);
+		for (int i = 0; i < result.m_NumberOfRows; ++i) {
+			for (int j = 0; j < result.m_NumberOfColumns; ++j) {
+				for (int k = 0; k < result.m_NumberOfColumns; ++k) {
+					result.m_Data[i][j] += (m_Data[i][k] * other.m_Data[k][j]);
+				}
+			}
+		}
+
 		return result;
 	}
 	
