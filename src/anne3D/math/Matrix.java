@@ -28,6 +28,18 @@ public class Matrix {
 		}
 	}
 	
+	public double getValue(final int row, final int column) {
+		if (row < 0 || column < 0) {
+			throw new RuntimeException("Can not get matrix value with negative dimensions as arguments.");
+		}
+		
+		if (row > m_NumberOfRows || column > m_NumberOfColumns) {
+			throw new RuntimeException("Can not get matrix value, out of matrix dimension.");
+		}
+		
+		return m_Data[row][column];
+	}
+	
 	@Override
 	public boolean equals(final Object other) {
 		if (this == other) {
@@ -41,7 +53,6 @@ public class Matrix {
 		return Arrays.deepEquals(((Matrix)other).m_Data , this.m_Data);
 	}
 	
-
 	@SuppressWarnings("unchecked")
 	private <T extends Matrix> T createSpecificMatrixType(final T other) {
 		if (other instanceof ColumnVector) {
@@ -95,7 +106,7 @@ public class Matrix {
 		final Matrix result = new Matrix(m_NumberOfRows, other.m_NumberOfColumns);
 		for (int i = 0; i < result.m_NumberOfRows; ++i) {
 			for (int j = 0; j < result.m_NumberOfColumns; ++j) {
-				for (int k = 0; k < result.m_NumberOfColumns; ++k) {
+				for (int k = 0; k < m_NumberOfRows; ++k) {
 					result.m_Data[i][j] += (m_Data[i][k] * other.m_Data[k][j]);
 				}
 			}
@@ -124,16 +135,17 @@ public class Matrix {
 		return identity;
 	}
 	
-	final public static Matrix scale(final double ...deltas) {
+	public static Matrix scale(final double ...deltas) {
 		if (deltas.length <= 1) {
 			throw new RuntimeException("Scale matrix must be at least 2D.");
 		}
 		
-		final Matrix scaleMatrix = new Matrix(deltas.length, deltas.length);
+		final Matrix scaleMatrix = new Matrix(deltas.length + 1, deltas.length + 1);
 		for (int i = 0; i < deltas.length; ++i) {
 			scaleMatrix.m_Data[i][i] = deltas[i];
 		}
 		
+		scaleMatrix.m_Data[deltas.length][deltas.length] = 1;
 		return scaleMatrix;
 	}
 	
@@ -148,5 +160,15 @@ public class Matrix {
 		}
 		
 		return translateMatrix;
+	}
+	
+	public static Matrix rotate(final double angleInDeg) {
+		final Matrix3 rotationMatrix = new Matrix3(new double[] {
+				Math.cos(Math.round(Math.toRadians(angleInDeg))), Math.sin(Math.round(Math.toRadians(angleInDeg))), 0,
+			   -Math.sin(Math.round(Math.toRadians(angleInDeg))), Math.cos(Math.round(Math.toRadians(angleInDeg))), 0,
+				0									, 0				 					  , 1
+			});
+		
+		return rotationMatrix;
 	}
 }

@@ -142,8 +142,9 @@ public class MatrixTests {
 	void scaleMatrix_get2DScaleMatrix() {
 		assertEquals(
 				new Matrix(new double[][] {
-					{1, 0},
-					{0, 3}}),
+					{1, 0, 0},
+					{0, 3, 0},
+					{0 ,0, 1}}),
 				Matrix.scale(1, 3));
 	}
 	
@@ -151,9 +152,10 @@ public class MatrixTests {
 	void scaleMatrix_get3DScaleMatrix() {
 		assertEquals(
 				new Matrix(new double[][] {
-					{1, 0,  0},
-					{0, 3,  0},
-					{0, 0, -6}}),
+					{1, 0,  0, 0},
+					{0, 3,  0, 0},
+					{0, 0, -6, 0},
+					{0, 0,  0, 1}}),
 				Matrix.scale(1, 3, -6));
 	}
 	
@@ -161,8 +163,9 @@ public class MatrixTests {
 	void scaleMatrix_get2DNegativeScaleMatrix() {
 		assertEquals(
 				new Matrix(new double[][] {
-					{-10, 0},
-					{  0, 3}}),
+					{-10, 0, 0},
+					{  0, 3, 0},
+					{  0, 0, 1}}),
 				Matrix.scale(-10, 3));
 	}
 	

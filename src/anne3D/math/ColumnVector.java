@@ -1,6 +1,6 @@
 package anne3D.math;
 
-final public class ColumnVector extends Matrix {
+public class ColumnVector extends Matrix {
 
 	public ColumnVector(final int numberOfRows) {
 		super(numberOfRows, 1);		
