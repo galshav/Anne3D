@@ -1,4 +1,4 @@
-package anne3D.view;
+package anne3D.canvas;
 
 import java.awt.Canvas;
 import java.awt.Color;

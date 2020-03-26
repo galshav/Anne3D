@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import anne3D.math.Point;
 import anne3D.utilities.File;
 import anne3D.math.Edge;

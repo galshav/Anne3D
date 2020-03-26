@@ -1,8 +1,10 @@
 package anne3D;
 
+import anne3D.canvas.EngineCanvas;
 import anne3D.configurations.Scene;
+import anne3D.configurations.View;
 import anne3D.utilities.Logger;
-import anne3D.view.EngineCanvas;
+
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -12,11 +14,12 @@ final public class Main {
 	
 	final private static String g_TITLE = "";
 	
-	//todo: get scene and view file from main args.
+	// TODO: get scene and view file from main args.
 	public static void main(final String[] args) throws Exception {
 		try {
 			Logger.Info("Starting engine.");
 			Scene scene = Scene.loadSceneFromFile("c:\\users\\galsh\\desktop\\example.scn");
+			View view = View.loadViewFromFile("c:\\users\\galsh\\desktop\\example.viw");
 			Frame frame = new Frame(g_TITLE);
 			EngineCanvas engineCanvas = new EngineCanvas(600, 800);
 			frame.add(engineCanvas);
