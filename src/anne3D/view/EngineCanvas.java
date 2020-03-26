@@ -8,7 +8,6 @@ import java.awt.Polygon;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-
 import anne3D.math.Matrix;
 import anne3D.math.Transformation;
 import anne3D.utilities.Logger;
@@ -50,25 +49,37 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
+	public void mouseClicked(MouseEvent mouseEvent) {
+		Logger.Debug(String.format("[%s] x=%d,y=%d",
+				"mouse clicked",
+				mouseEvent.getX(),
+				mouseEvent.getY()));
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent mouseEvent) {
+		Logger.Debug(String.format("[%s] x=%d,y=%d",
+				"mouse entered",
+				mouseEvent.getX(),
+				mouseEvent.getY()));
 		
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseExited(MouseEvent mouseEvent) {
+		Logger.Debug(String.format("[%s] x=%d,y=%d",
+				"mouse exited",
+				mouseEvent.getX(),
+				mouseEvent.getY()));
 		
 	}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		Logger.Debug(String.format("[%s] x=%d,y=%d", "mouse pressed", e.getX(), e.getY()));
+	public void mousePressed(MouseEvent mouseEvent) {
+		Logger.Debug(String.format("[%s] x=%d,y=%d",
+				"mouse pressed",
+				mouseEvent.getX(),
+				mouseEvent.getY()));
 		// Translate.
 		/*for (int i = 0; i < x.length; ++i) {
 			Matrix result = Matrix.translate(10,10).times(new Matrix(new double[][] {
@@ -133,19 +144,28 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseReleased(MouseEvent mouseEvent) {
+		Logger.Debug(String.format("[%s] x=%d,y=%d",
+				"mouse released",
+				mouseEvent.getX(),
+				mouseEvent.getY()));
 		
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		Logger.Debug(String.format("[%s] x=%d,y=%d", "mouse dragged", arg0.getX(), arg0.getY()));
+	public void mouseDragged(MouseEvent mouseEvent) {
+		Logger.Debug(String.format("[%s] x=%d,y=%d",
+				"mouse dragged",
+				mouseEvent.getX(),
+				mouseEvent.getY()));
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseMoved(MouseEvent mouseEvent) {
+		Logger.Debug(String.format("[%s] x=%d,y=%d",
+				"mouse moved",
+				mouseEvent.getX(),
+				mouseEvent.getY()));
 		
 	}
 }

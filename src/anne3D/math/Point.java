@@ -9,7 +9,19 @@ public final class Point {
 	public Point(final double x, final double y, final double z) {
 		m_X = x;
 		m_Y = y;
-		m_Z = y;
+		m_Z = z;
+	}
+	
+	public Point(final double x, final double y) {
+		this(x, y, 0);
+	}
+	
+	public Point() {
+		this(0, 0, 0);
+	}
+	
+	public Point(final Point other) {
+		this(other.m_X, other.m_Y, other.m_Z);
 	}
 	
 	public double X() {
