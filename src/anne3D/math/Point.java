@@ -2,9 +2,9 @@ package anne3D.math;
 
 public final class Point {
 	
-	private double m_X;
-	private double m_Y;
-	private double m_Z;
+	final private double m_X;
+	final private double m_Y;
+	final private double m_Z;
 	
 	public Point(final double x, final double y, final double z) {
 		m_X = x;

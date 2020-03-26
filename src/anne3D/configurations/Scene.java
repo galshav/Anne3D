@@ -30,13 +30,6 @@ final public class Scene {
 		m_Edges = edges;
 	}
 	
-	private Scene() {
-		m_Coordinates = null;
-		m_Edges = null;
-		m_NumberOfEdges = 0;
-		m_NumberOfVertices = 0;
-	}
-	
 	/*
 	 * Scene file format:
 	 * 		NUMBER - NUMBER_OF_VERTICES
@@ -46,7 +39,6 @@ final public class Scene {
 	 */
 	public static Scene loadSceneFromFile(final String filePath) throws IOException {
 		Objects.requireNonNull(filePath, "filePath argument can not be null.");
-		Scene scene = new Scene();
 		final File sceneFile = new File(filePath);
 		final List<String> content = sceneFile.read();
 		final int numberOfVertices = Integer.parseInt(content.get(g_NUMBER_OF_VERTICES_INDEX));
@@ -72,6 +64,10 @@ final public class Scene {
 					new Point(coordinates.get(Integer.parseInt(edgeStringArray[1])))));
 		}
 		
-		return new Scene(numberOfVertices, coordinates, numberOfEdges, edges);
+		return new Scene(
+				numberOfVertices,
+				coordinates,
+				numberOfEdges,
+				edges);
 	}
 }

@@ -10,12 +10,13 @@ import java.util.List;
 final public class File extends java.io.File{
 
 	private static final long serialVersionUID = 1L;
-
+	private static String g_CAN_NOT_FIND_FILE_MESSAGE_FORMAT = "Can not find file: [%s]";
+	
 	public File(final String filePath) throws FileNotFoundException {
 		super(filePath);
 		if (false == this.exists() ||
 			false == this.isFile()) {
-			throw new FileNotFoundException(String.format("Can not find file: [%s]", filePath));
+			throw new FileNotFoundException(String.format(g_CAN_NOT_FIND_FILE_MESSAGE_FORMAT, filePath));
 		}
 	}
 	
