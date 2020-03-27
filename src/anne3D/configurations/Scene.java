@@ -8,25 +8,29 @@ import anne3D.math.Point;
 import anne3D.utilities.File;
 import anne3D.math.Edge;
 
+/*
+ * Scene data type class.
+ * All members should be public for easy access.
+ */
 final public class Scene {
 	
 	final private static int g_NUMBER_OF_VERTICES_INDEX = 0;
 	private static int g_NUMBER_OF_EDGES_INDEX 	= 0;
 	
-	final private int m_NumberOfVertices;
-	final private ArrayList<Point> m_Coordinates;
-	final private int m_NumberOfEdges;
-	final private ArrayList<Edge> m_Edges;
+	final public int NumberOfVertices;
+	final public ArrayList<Point> Coordinates;
+	final public int NumberOfEdges;
+	final public ArrayList<Edge> Edges;
 	
 	private Scene(
 			final int numberOfVertices,
 			final ArrayList<Point> coordinates,
 			final int numberOfEdges,
 			final ArrayList<Edge> edges) {
-		m_NumberOfVertices = numberOfVertices;
-		m_Coordinates = coordinates;
-		m_NumberOfEdges = numberOfEdges;
-		m_Edges = edges;
+		NumberOfVertices = numberOfVertices;
+		Coordinates = coordinates;
+		NumberOfEdges = numberOfEdges;
+		Edges = edges;
 	}
 	
 	/*

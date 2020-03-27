@@ -1,44 +1,62 @@
 package anne3D.configurations;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-
 import anne3D.math.Matrix;
 import anne3D.math.Point;
 import anne3D.utilities.File;
 
+/*
+ * View data type class.
+ * All members should be public for easy access.
+ */
 public class View {
 	
+	final public static int  g_WINDOW_MARGIN      = 40;
 	final private static int g_INDEX_ORIGIN 	  = 0;
 	final private static int g_INDEX_ANGLE  	  = 1;
 	final private static int g_INDEX_WINDOW_SIZE  = 2;
 	final private static int g_INDEX_RESOLUTION   = 3;
 	
-	final private Point m_Origin;
-	final private double m_Angle;
-	final private int m_WindowWidth;
-	final private int m_WindowHeight;
-	final private int m_ViewWidth;
-	final private int m_ViewHeight;
-	final private Matrix m_ViewTransformation;
+	final public Point Origin;
+	final public double Angle;
+	final public int WindowWidth;
+	final public int WindowHeight;
+	final public int ViewWidth;
+	final public int ViewHeight;
+	final public Matrix ViewTransformation;
 	
-	public View(
+	private View(
 			final Point origin,
 			final double angle,
 			final int windowWidth,
 			final int windowHeight,
 			final int viewWidth,
 			final int viewHeight) {
-		m_Origin = origin;
-		m_Angle = angle;
-		m_WindowWidth = windowWidth;
-		m_WindowHeight = windowHeight;
-		m_ViewWidth = viewWidth;
-		m_ViewHeight = viewHeight;
-		m_ViewTransformation = null;
-		// TODO: Calculate view transformation matrix here.
+		Origin = origin;
+		Angle = angle;
+		WindowWidth = windowWidth;
+		WindowHeight = windowHeight;
+		ViewWidth = viewWidth;
+		ViewHeight = viewHeight;
+		
+		Matrix marginTranslateTransformation = Matrix.translate(
+				(ViewWidth  / 2) + (g_WINDOW_MARGIN / 2), 
+				(ViewHeight / 2) + (g_WINDOW_MARGIN / 2));
+		Matrix scaleTransformation = Matrix.scale(
+				(ViewWidth  / WindowWidth),
+				(ViewHeight / WindowHeight) * (-1));
+		Matrix rotateTransformation = Matrix.rotate(Angle);
+		Matrix originTranslateTransformation = Matrix.translate(
+				-Origin.X(),
+				- Origin.Y());
+		
+		ViewTransformation = 
+				marginTranslateTransformation.times(
+				scaleTransformation).times(
+				rotateTransformation).times(
+				originTranslateTransformation);
 	}
 	
 	public static View loadViewFromFile(final String filePath) throws IOException {		

@@ -12,16 +12,17 @@ import java.lang.Exception;
 
 final public class Main {
 	
-	final private static String g_TITLE = "";
+	final private static float g_VERSION = 0.1f;
+	final private static String g_TITLE = String.format("Anne3D game engine v1.0", g_VERSION);
 	
 	// TODO: get scene and view file from main args.
 	public static void main(final String[] args) throws Exception {
 		try {
 			Logger.Info("Starting engine.");
-			Scene scene = Scene.loadSceneFromFile("c:\\users\\galsh\\desktop\\example.scn");
-			View view = View.loadViewFromFile("c:\\users\\galsh\\desktop\\example.viw");
 			Frame frame = new Frame(g_TITLE);
-			EngineCanvas engineCanvas = new EngineCanvas(600, 800);
+			EngineCanvas engineCanvas = new EngineCanvas(
+					Scene.loadSceneFromFile("c:\\users\\galsh\\desktop\\rec.scn"),
+					View.loadViewFromFile("c:\\users\\galsh\\desktop\\example.viw"));
 			frame.add(engineCanvas);
 			WindowAdapter windowAdapter = new WindowAdapter() {
 				public void windowClosing(WindowEvent windowEvent) {
