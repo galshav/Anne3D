@@ -9,7 +9,7 @@ public class Matrix3 extends Matrix {
 	public Matrix3(final double[] data) {
 		this();
 		if (9 != data.length) {
-			throw new RuntimeException("Matrix2D must accept 4 double's");
+			throw new RuntimeException("Matrix3D must accept 9 double's");
 		}
 		
 		for (int i = 0; i < 3; ++i) {

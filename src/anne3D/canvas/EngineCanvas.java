@@ -10,6 +10,8 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import anne3D.Main;
 import anne3D.configurations.Scene;
 import anne3D.configurations.View;
 import anne3D.math.Edge;
@@ -19,7 +21,6 @@ import anne3D.math.Transformation;
 import anne3D.utilities.Logger;
 
 final public class EngineCanvas extends Canvas implements MouseListener, MouseMotionListener {
-
 	private static final long serialVersionUID = 1L;
 	private Point m_StartPoint;
 	private Point m_EndPoint;
@@ -64,9 +65,42 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				m_View.ViewHeight);
 	}
 	
+	@SuppressWarnings("unused")
+	private void paintGrid(final Graphics graphics) {
+		if (false == Main.g_DEBUG) {
+			return;
+		}
+		
+		int viewOrigin = View.g_WINDOW_MARGIN / 2;
+		int widthResolution = m_View.ViewWidth / 3;
+		int heightResolution = m_View.ViewHeight / 3;
+		
+		graphics.drawLine(
+				viewOrigin + widthResolution,
+				viewOrigin,
+				viewOrigin + widthResolution,
+				viewOrigin + m_View.ViewHeight);
+		graphics.drawLine(
+				viewOrigin + widthResolution * 2,
+				viewOrigin, 
+				viewOrigin + widthResolution * 2,
+				viewOrigin + m_View.ViewHeight);
+		graphics.drawLine(
+				viewOrigin,
+				viewOrigin + heightResolution, 
+				viewOrigin + m_View.ViewWidth, 
+				viewOrigin + heightResolution);
+		graphics.drawLine(
+				viewOrigin, 
+				viewOrigin + heightResolution * 2, 
+				viewOrigin + m_View.ViewWidth, 
+				viewOrigin + heightResolution * 2);
+	}
+	
 	@Override
 	public void paint (final Graphics graphics) {
 		paintClipBorder(graphics);
+		paintGrid(graphics);
 		graphics.setColor(Color.GREEN);
 		for (Edge edge : m_Edges) {
 			graphics.drawLine(
