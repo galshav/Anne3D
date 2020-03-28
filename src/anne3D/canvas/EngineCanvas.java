@@ -3,14 +3,11 @@ package anne3D.canvas;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Polygon;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-
 import anne3D.Main;
 import anne3D.configurations.Scene;
 import anne3D.configurations.View;
@@ -21,13 +18,20 @@ import anne3D.math.Transformation;
 import anne3D.utilities.Logger;
 
 final public class EngineCanvas extends Canvas implements MouseListener, MouseMotionListener {
+	private static enum e_STATE {
+		TRANSLATE,
+		SCALE,
+		ROTATE
+	}
+	
 	private static final long serialVersionUID = 1L;
 	private Point m_StartPoint;
-	private Point m_EndPoint;
 	private View m_View;
 	private ArrayList<Edge> m_Edges;
+	private Scene m_Scene;
 	private Transformation m_CurrentTransformation;
 	private Transformation m_AccumulatedTransformation;
+	private e_STATE m_CurrentTransformationState;
 	
 	public EngineCanvas(final Scene scene, final View view) {
 		Objects.requireNonNull(scene, "scene argument can not be null.");
@@ -35,7 +39,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		m_CurrentTransformation = new Transformation(Matrix.identity(3));
 		m_AccumulatedTransformation = new Transformation(Matrix.identity(3));
 		m_View = view;
-		m_Edges = scene.Edges;
+		m_Scene = scene;
 		setSize(view.ViewWidth + View.g_WINDOW_MARGIN,
 				view.ViewWidth + View.g_WINDOW_MARGIN);
 		addMouseListener(this);
@@ -110,6 +114,53 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 					(int)edge.GetSecondPoint().Y());
 		}
 	}
+	
+	private void setTransformationTypeByPressedPointCoordinates(final Point point) {
+		final double x = point.X();
+		final double y = point.Y();
+		int viewOrigin = View.g_WINDOW_MARGIN / 2;
+		int widthResolution = m_View.ViewWidth / 3;
+		int heightResolution = m_View.ViewHeight / 3;
+		
+		// Center.
+		if (x > widthResolution + viewOrigin && (x < widthResolution * 2 + viewOrigin) &&
+		   (y > heightResolution + viewOrigin) && (y < heightResolution * 2 + viewOrigin)) {
+			Logger.Debug("Translate");
+			m_CurrentTransformationState = e_STATE.TRANSLATE;
+		}
+		
+		// Left center.
+		else if (x > viewOrigin && x < widthResolution + viewOrigin &&
+				 y > heightResolution + viewOrigin && y < heightResolution * 2 + viewOrigin ||
+		// Right center.
+				 x > widthResolution * 2 + viewOrigin && x < widthResolution * 3 + viewOrigin &&
+				 y > heightResolution + viewOrigin && y < heightResolution * 2 + viewOrigin ||
+		// up center.
+				 x > widthResolution + viewOrigin && x < widthResolution * 2 + viewOrigin &&
+				 y > viewOrigin && y < heightResolution + viewOrigin ||
+		// down center.
+				 x > widthResolution + viewOrigin && x < widthResolution * 2 + viewOrigin &&
+				 y > heightResolution * 2 + viewOrigin && y < heightResolution * 3 + viewOrigin) {
+			Logger.Debug("Scale");
+			m_CurrentTransformationState = e_STATE.SCALE;
+		}
+		
+		// top left
+		else if (x > viewOrigin && x < widthResolution + viewOrigin &&
+				 y > viewOrigin && y < heightResolution + viewOrigin ||
+		// top right.
+				 x > widthResolution * 2 + viewOrigin && x < widthResolution * 3 + viewOrigin &&
+				 y > viewOrigin && y < heightResolution + viewOrigin ||
+		// bottom right.
+				 x > widthResolution * 2 + viewOrigin && x < widthResolution * 3 + viewOrigin &&
+				 y > heightResolution * 2 + viewOrigin && x < heightResolution * 3 + viewOrigin ||
+		// bottom left.
+				 x > viewOrigin && x < widthResolution + viewOrigin &&
+				 y > heightResolution * 2 + viewOrigin && y < heightResolution * 3 + viewOrigin) {
+			Logger.Debug("Rotate");
+			m_CurrentTransformationState = e_STATE.ROTATE;
+		}
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent mouseEvent) {
@@ -143,6 +194,10 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				"mouse pressed",
 				mouseEvent.getX(),
 				mouseEvent.getY()));
+		m_StartPoint = new Point(mouseEvent.getX(), mouseEvent.getY());
+		setTransformationTypeByPressedPointCoordinates(m_StartPoint);
+		// Find the required transformation according to start point.
+		
 		// Translate.
 		/*for (int i = 0; i < x.length; ++i) {
 			Matrix result = Matrix.translate(10,10).times(new Matrix(new double[][] {
@@ -203,9 +258,6 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 			y[i] = (int)result.getValue(1, 0);
 		}
 		*/
-		
-		this.repaint();
-		
 	}
 
 	@Override
@@ -214,7 +266,6 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				"mouse released",
 				mouseEvent.getX(),
 				mouseEvent.getY()));
-		
 	}
 
 	@Override
@@ -223,6 +274,20 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				"mouse dragged",
 				mouseEvent.getX(),
 				mouseEvent.getY()));
+		
+		if (e_STATE.TRANSLATE == m_CurrentTransformationState) {
+			
+		}
+		
+		else if (e_STATE.SCALE == m_CurrentTransformationState) {
+			
+		}
+		
+		else if (e_STATE.ROTATE == m_CurrentTransformationState) {
+			
+		}
+		
+		this.repaint();
 	}
 
 	@Override
