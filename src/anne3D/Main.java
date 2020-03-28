@@ -1,14 +1,12 @@
 package anne3D;
-
-import anne3D.canvas.EngineCanvas;
-import anne3D.configurations.Scene;
-import anne3D.configurations.View;
-import anne3D.utilities.Logger;
-
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.Exception;
+import anne3D.canvas.EngineCanvas;
+import anne3D.configurations.Scene;
+import anne3D.configurations.View;
+import anne3D.utilities.Logger;
 
 final public class Main {
 	
@@ -44,8 +42,4 @@ final public class Main {
 			throw error;
 		}
 	}
-}
-
-class a{
-	
 }
