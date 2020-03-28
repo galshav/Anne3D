@@ -1,4 +1,5 @@
 package anne3D;
+import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -20,7 +21,8 @@ final public class Main {
 			Frame frame = new Frame(g_TITLE);
 			EngineCanvas engineCanvas = new EngineCanvas(
 					Scene.loadSceneFromFile("c:\\users\\galsh\\desktop\\example.scn"),
-					View.loadViewFromFile("c:\\users\\galsh\\desktop\\example.viw"));
+					View.loadViewFromFile("c:\\users\\galsh\\desktop\\example.viw"),
+					Color.BLACK);
 			frame.add(engineCanvas);
 			WindowAdapter windowAdapter = new WindowAdapter() {
 				public void windowClosing(WindowEvent windowEvent) {

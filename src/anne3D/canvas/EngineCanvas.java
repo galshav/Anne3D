@@ -21,57 +21,52 @@ import anne3D.utilities.Logger;
 final public class EngineCanvas extends Canvas implements MouseListener, MouseMotionListener {
 
 	private static final long serialVersionUID = 1L;
-	
 	private Point m_StartPoint;
 	private Point m_EndPoint;
-	
-	final private int m_Width;
-	final private int m_Height;
-	final private View m_View;
+	private View m_View;
 	private ArrayList<Edge> m_Edges;
-	
-	int x[] = {100, 200, 200, 100};
-	int y[] = {100, 100, 200, 200};
-	
-	public EngineCanvas(final int width, final int height) {
-		if (width <= 0 || height <= 0) {
-			throw new RuntimeException("Canvas dimensions must be positive.");
-		}
-		
-		m_Width = width;
-		m_Height = height;
-		setSize(m_Width, m_Height);
-		setBackground(Color.black);
-		addMouseListener(this);
-		addMouseMotionListener(this);
-		//m_Scene = null;
-		m_View = null;
-	}
+	private Transformation m_CurrentTransformation;
+	private Transformation m_AccumulatedTransformation;
 	
 	public EngineCanvas(final Scene scene, final View view) {
 		Objects.requireNonNull(scene, "scene argument can not be null.");
 		Objects.requireNonNull(view, "view argument can not be null.");
-		m_Width = view.ViewWidth + View.g_WINDOW_MARGIN;
-		m_Height = view.ViewHeight + View.g_WINDOW_MARGIN;
+		m_CurrentTransformation = new Transformation(Matrix.identity(3));
+		m_AccumulatedTransformation = new Transformation(Matrix.identity(3));
 		m_View = view;
 		m_Edges = scene.Edges;
-		setSize(m_Width, m_Height);
-		setBackground(Color.black);
+		setSize(view.ViewWidth + View.g_WINDOW_MARGIN,
+				view.ViewWidth + View.g_WINDOW_MARGIN);
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		
 		ArrayList<Edge> transformedScene = new ArrayList<Edge>();
 		for (Edge edge : scene.Edges) {
-			Point p1 = m_View.ViewTransformation.times(edge.GetFirstPoint());
-			Point p2 = m_View.ViewTransformation.times(edge.GetSecondPoint());
+			Point p1 = m_View.ViewTransformation.applyTransformation(edge.GetFirstPoint());
+			Point p2 = m_View.ViewTransformation.applyTransformation(edge.GetSecondPoint());
 			transformedScene.add(new Edge(p1, p2));
 		}
 		
 		m_Edges = transformedScene;
 	}
 	
+	public EngineCanvas(final Scene scene, final View view, Color canvasColor) {
+		this(scene, view);
+		setBackground(canvasColor);
+	}
+	
+	private void paintClipBorder(final Graphics graphics) {
+		graphics.setColor(Color.WHITE);
+		graphics.drawRect(
+				View.g_WINDOW_MARGIN / 2,
+				View.g_WINDOW_MARGIN / 2,
+				m_View.ViewWidth ,
+				m_View.ViewHeight);
+	}
+	
 	@Override
-	public void paint (Graphics graphics) {
+	public void paint (final Graphics graphics) {
+		paintClipBorder(graphics);
 		graphics.setColor(Color.GREEN);
 		for (Edge edge : m_Edges) {
 			graphics.drawLine(
@@ -80,15 +75,6 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 					(int)edge.GetSecondPoint().X(),
 					(int)edge.GetSecondPoint().Y());
 		}
-		
-		//Polygon	p = new Polygon();
-
-		//for (int i=0; i < x.length; i++) {
-		//	p.addPoint(x[i],y[i]);
-		//}
-		//graphics.drawRect(20,20, m_Width - 40, m_Height - 40);
-		//graphics.setColor(Color.red);
-		//graphics.drawPolygon(p);
 	}
 
 	@Override
@@ -166,6 +152,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		}
 		*/
 		
+		/*
 		for (int i = 0; i < x.length; ++i) {
 			Matrix transformationMatrix = 
 					Transformation.translate(150, 150).times
@@ -181,6 +168,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 			x[i] = (int)result.getValue(0, 0);
 			y[i] = (int)result.getValue(1, 0);
 		}
+		*/
 		
 		this.repaint();
 		
@@ -209,6 +197,5 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				"mouse moved",
 				mouseEvent.getX(),
 				mouseEvent.getY()));
-		
 	}
 }

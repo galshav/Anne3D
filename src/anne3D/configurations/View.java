@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import anne3D.math.Matrix;
 import anne3D.math.Point;
+import anne3D.math.Transformation;
 import anne3D.utilities.File;
 
 /*
@@ -25,7 +26,7 @@ public class View {
 	final public int WindowHeight;
 	final public int ViewWidth;
 	final public int ViewHeight;
-	final public Matrix ViewTransformation;
+	final public Transformation ViewTransformation;
 	
 	private View(
 			final Point origin,
@@ -52,11 +53,11 @@ public class View {
 				-Origin.X(),
 				- Origin.Y());
 		
-		ViewTransformation = 
+		ViewTransformation = new Transformation(
 				marginTranslateTransformation.times(
 				scaleTransformation).times(
 				rotateTransformation).times(
-				originTranslateTransformation);
+				originTranslateTransformation));	
 	}
 	
 	public static View loadViewFromFile(final String filePath) throws IOException {		

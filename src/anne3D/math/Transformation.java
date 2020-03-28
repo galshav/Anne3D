@@ -2,6 +2,16 @@ package anne3D.math;
 
 final public class Transformation {
 	
+	final public Matrix TransformationMatrix;
+	
+	public Transformation(final Matrix transformationMatrix) {
+		TransformationMatrix = transformationMatrix;
+	}
+	
+	public Point applyTransformation(final Point point) {
+		return TransformationMatrix.times(point);
+	}
+	
 	public static Matrix translate(final double ...deltas) {
 		if (deltas.length <= 1) {
 			throw new RuntimeException("Translate matrix must be at least 2D.");

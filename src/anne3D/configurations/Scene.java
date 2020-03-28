@@ -53,7 +53,8 @@ final public class Scene {
 			String[] coordinateStringArray = coordinateString.split(" ");
 			coordinates.add(new Point
 					(Double.parseDouble(coordinateStringArray[0]),
-					 Double.parseDouble(coordinateStringArray[1]),1));
+					 Double.parseDouble(coordinateStringArray[1]),
+					 1));
 		}
 		
 		final ArrayList<Edge> edges = new ArrayList<Edge>();
