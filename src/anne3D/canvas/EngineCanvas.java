@@ -3,17 +3,18 @@ package anne3D.canvas;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import anne3D.configurations.Scene;
 import anne3D.configurations.View;
 import anne3D.math.Edge;
 import anne3D.math.Matrix;
+import anne3D.math.Point;
 import anne3D.math.Transformation;
 import anne3D.utilities.Logger;
 
@@ -26,8 +27,8 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	
 	final private int m_Width;
 	final private int m_Height;
-	final private Scene m_Scene;
 	final private View m_View;
+	private ArrayList<Edge> m_Edges;
 	
 	int x[] = {100, 200, 200, 100};
 	int y[] = {100, 100, 200, 200};
@@ -43,7 +44,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		setBackground(Color.black);
 		addMouseListener(this);
 		addMouseMotionListener(this);
-		m_Scene = null;
+		//m_Scene = null;
 		m_View = null;
 	}
 	
@@ -53,17 +54,26 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		m_Width = view.ViewWidth + View.g_WINDOW_MARGIN;
 		m_Height = view.ViewHeight + View.g_WINDOW_MARGIN;
 		m_View = view;
-		m_Scene = scene;
+		m_Edges = scene.Edges;
 		setSize(m_Width, m_Height);
 		setBackground(Color.black);
 		addMouseListener(this);
 		addMouseMotionListener(this);
+		
+		ArrayList<Edge> transformedScene = new ArrayList<Edge>();
+		for (Edge edge : scene.Edges) {
+			Point p1 = m_View.ViewTransformation.times(edge.GetFirstPoint());
+			Point p2 = m_View.ViewTransformation.times(edge.GetSecondPoint());
+			transformedScene.add(new Edge(p1, p2));
+		}
+		
+		m_Edges = transformedScene;
 	}
 	
 	@Override
 	public void paint (Graphics graphics) {
 		graphics.setColor(Color.GREEN);
-		for (Edge edge : m_Scene.Edges) {
+		for (Edge edge : m_Edges) {
 			graphics.drawLine(
 					(int)edge.GetFirstPoint().X(),
 					(int)edge.GetFirstPoint().Y(),

@@ -21,7 +21,7 @@ final public class Main {
 			Logger.Info("Starting engine.");
 			Frame frame = new Frame(g_TITLE);
 			EngineCanvas engineCanvas = new EngineCanvas(
-					Scene.loadSceneFromFile("c:\\users\\galsh\\desktop\\rec.scn"),
+					Scene.loadSceneFromFile("c:\\users\\galsh\\desktop\\example.scn"),
 					View.loadViewFromFile("c:\\users\\galsh\\desktop\\example.viw"));
 			frame.add(engineCanvas);
 			WindowAdapter windowAdapter = new WindowAdapter() {

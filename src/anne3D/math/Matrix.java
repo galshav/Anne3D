@@ -116,6 +116,18 @@ public class Matrix {
 		return result;
 	}
 	
+	public Point times(final Point point) {
+		Matrix newPointAsMatrix = this.times(new Matrix(new double[][] {
+			{point.X()},
+			{point.Y()},
+			{point.Z()}}));
+		
+		return new Point(
+				newPointAsMatrix.getValue(0, 0),
+				newPointAsMatrix.getValue(1, 0),
+				newPointAsMatrix.getValue(2, 0));
+	}
+	
 	public Matrix transpose() {
 		Matrix transposeMatrix = new Matrix(m_NumberOfColumns, m_NumberOfRows);
 		for (int i = 0; i < transposeMatrix.m_NumberOfRows; ++i) {
