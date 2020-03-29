@@ -11,10 +11,12 @@ import java.util.Objects;
 import anne3D.Main;
 import anne3D.configurations.Scene;
 import anne3D.configurations.View;
+import anne3D.math.ColumnVector;
 import anne3D.math.Edge;
 import anne3D.math.Matrix;
 import anne3D.math.Point;
 import anne3D.math.Transformation;
+import anne3D.math.Vector3;
 import anne3D.utilities.Logger;
 
 final public class EngineCanvas extends Canvas implements MouseListener, MouseMotionListener {
@@ -113,7 +115,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				m_AccumulatedTransformation.compose(
 				m_View.ViewTransformation));
 		
-		m_AccumulatedTransformation = m_AccumulatedTransformation.compose(m_CurrentTransformation);
+		//m_AccumulatedTransformation = m_AccumulatedTransformation.compose(m_CurrentTransformation);
 		for (final Edge origEdge : m_Scene.Edges) {
 			Point p1 = totalTransformation.applyTransformation(origEdge.GetFirstPoint());
 			Point p2 = totalTransformation.applyTransformation(origEdge.GetSecondPoint());
@@ -196,7 +198,6 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				"mouse exited",
 				mouseEvent.getX(),
 				mouseEvent.getY()));
-		
 	}
 
 	@Override
@@ -277,8 +278,30 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				"mouse released",
 				mouseEvent.getX(),
 				mouseEvent.getY()));
+		m_AccumulatedTransformation = m_AccumulatedTransformation.compose(m_CurrentTransformation);
 	}
 
+	private void setTranslateTransform(final MouseEvent mouseEvent) {
+		m_CurrentTransformation = new Transformation(
+				Matrix.translate(
+						mouseEvent.getX() - m_StartPoint.X(),
+						mouseEvent.getY() - m_StartPoint.Y()));
+	}
+	
+	private void setScaleTransform(final MouseEvent mouseEvent) {
+		final double centerX = m_View.ViewWidth / 2 + View.g_WINDOW_MARGIN;
+		final double centerY = m_View.ViewHeight / 2 + View.g_WINDOW_MARGIN;
+		final ColumnVector centerVector = new ColumnVector(new double[] {centerX, centerY});
+		final ColumnVector destinationVector = new ColumnVector(new double[] {mouseEvent.getX(), mouseEvent.getY()});
+		final ColumnVector sourceVector = new ColumnVector(new double[] {m_StartPoint.X(), m_StartPoint.Y()});
+		final double scaleFactor = destinationVector.minus(centerVector).vectorSize() / 
+								   sourceVector.minus(centerVector).vectorSize();
+		m_CurrentTransformation = new Transformation(
+			 Matrix.translate(centerX, centerY).times
+			(Matrix.scale(scaleFactor, scaleFactor).times
+			(Matrix.translate(-centerX, -centerY))));
+	}
+	
 	@Override
 	public void mouseDragged(MouseEvent mouseEvent) {
 		Logger.Debug(String.format("[%s] x=%d,y=%d",
@@ -287,18 +310,19 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				mouseEvent.getY()));
 		Logger.Debug(m_CurrentTransformationState.toString());
 		if (e_STATE.TRANSLATE == m_CurrentTransformationState) {
-			m_CurrentTransformation = new Transformation(
-					Matrix.translate(
-							mouseEvent.getX() - m_StartPoint.X(),
-							mouseEvent.getY() - m_StartPoint.Y()));
+			setTranslateTransform(mouseEvent);
 		}
 		
 		else if (e_STATE.SCALE == m_CurrentTransformationState) {
-			
+			setScaleTransform(mouseEvent);
 		}
 		
 		else if (e_STATE.ROTATE == m_CurrentTransformationState) {
 			
+		}
+		
+		else {
+			return;
 		}
 		
 		this.repaint();

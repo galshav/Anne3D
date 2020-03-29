@@ -61,8 +61,8 @@ final public class Scene {
 		final int numberOfEdges = Integer.parseInt(
 				content.get(numberOfVertices + g_NUMBER_OF_VERTICES_INDEX + 1));
 		for (int i = g_NUMBER_OF_EDGES_INDEX + 1; i <= g_NUMBER_OF_EDGES_INDEX + numberOfEdges; ++i) {
-			String edgeString = content.get(i);
-			String[] edgeStringArray = edgeString.split(" ");
+			final String edgeString = content.get(i);
+			final String[] edgeStringArray = edgeString.split(" ");
 			edges.add(new Edge(
 					new Point(coordinates.get(Integer.parseInt(edgeStringArray[0]))),
 					new Point(coordinates.get(Integer.parseInt(edgeStringArray[1])))));
