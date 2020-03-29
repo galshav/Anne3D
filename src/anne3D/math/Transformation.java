@@ -12,6 +12,10 @@ final public class Transformation {
 		return TransformationMatrix.times(point);
 	}
 	
+	public Transformation compose(final Transformation transformation) {
+		return new Transformation(TransformationMatrix.times(transformation.TransformationMatrix));
+	}
+	
 	public static Matrix translate(final double ...deltas) {
 		if (deltas.length <= 1) {
 			throw new RuntimeException("Translate matrix must be at least 2D.");

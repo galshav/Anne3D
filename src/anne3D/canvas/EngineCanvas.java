@@ -21,7 +21,8 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	private static enum e_STATE {
 		TRANSLATE,
 		SCALE,
-		ROTATE
+		ROTATE,
+		NONE
 	}
 	
 	private static final long serialVersionUID = 1L;
@@ -40,12 +41,13 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		m_AccumulatedTransformation = new Transformation(Matrix.identity(3));
 		m_View = view;
 		m_Scene = scene;
+		m_CurrentTransformationState = e_STATE.NONE;
 		setSize(view.ViewWidth + View.g_WINDOW_MARGIN,
 				view.ViewWidth + View.g_WINDOW_MARGIN);
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		
-		ArrayList<Edge> transformedScene = new ArrayList<Edge>();
+		final ArrayList<Edge> transformedScene = new ArrayList<Edge>();
 		for (Edge edge : scene.Edges) {
 			Point p1 = m_View.ViewTransformation.applyTransformation(edge.GetFirstPoint());
 			Point p2 = m_View.ViewTransformation.applyTransformation(edge.GetSecondPoint());
@@ -75,9 +77,9 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 			return;
 		}
 		
-		int viewOrigin = View.g_WINDOW_MARGIN / 2;
-		int widthResolution = m_View.ViewWidth / 3;
-		int heightResolution = m_View.ViewHeight / 3;
+		final int viewOrigin = View.g_WINDOW_MARGIN / 2;
+		final int widthResolution = m_View.ViewWidth / 3;
+		final int heightResolution = m_View.ViewHeight / 3;
 		
 		graphics.drawLine(
 				viewOrigin + widthResolution,
@@ -106,26 +108,33 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		paintClipBorder(graphics);
 		paintGrid(graphics);
 		graphics.setColor(Color.GREEN);
-		for (Edge edge : m_Edges) {
+		final Transformation totalTransformation = 
+				m_CurrentTransformation.compose(
+				m_AccumulatedTransformation.compose(
+				m_View.ViewTransformation));
+		
+		m_AccumulatedTransformation = m_AccumulatedTransformation.compose(m_CurrentTransformation);
+		for (final Edge origEdge : m_Scene.Edges) {
+			Point p1 = totalTransformation.applyTransformation(origEdge.GetFirstPoint());
+			Point p2 = totalTransformation.applyTransformation(origEdge.GetSecondPoint());
 			graphics.drawLine(
-					(int)edge.GetFirstPoint().X(),
-					(int)edge.GetFirstPoint().Y(),
-					(int)edge.GetSecondPoint().X(),
-					(int)edge.GetSecondPoint().Y());
-		}
+					(int)p1.X(),
+					(int)p1.Y(),
+					(int)p2.X(),
+					(int)p2.Y());
+		}	
 	}
 	
 	private void setTransformationTypeByPressedPointCoordinates(final Point point) {
 		final double x = point.X();
 		final double y = point.Y();
-		int viewOrigin = View.g_WINDOW_MARGIN / 2;
-		int widthResolution = m_View.ViewWidth / 3;
-		int heightResolution = m_View.ViewHeight / 3;
+		final int viewOrigin = View.g_WINDOW_MARGIN / 2;
+		final int widthResolution = m_View.ViewWidth / 3;
+		final int heightResolution = m_View.ViewHeight / 3;
 		
 		// Center.
 		if (x > widthResolution + viewOrigin && (x < widthResolution * 2 + viewOrigin) &&
 		   (y > heightResolution + viewOrigin) && (y < heightResolution * 2 + viewOrigin)) {
-			Logger.Debug("Translate");
 			m_CurrentTransformationState = e_STATE.TRANSLATE;
 		}
 		
@@ -141,7 +150,6 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		// down center.
 				 x > widthResolution + viewOrigin && x < widthResolution * 2 + viewOrigin &&
 				 y > heightResolution * 2 + viewOrigin && y < heightResolution * 3 + viewOrigin) {
-			Logger.Debug("Scale");
 			m_CurrentTransformationState = e_STATE.SCALE;
 		}
 		
@@ -157,8 +165,11 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		// bottom left.
 				 x > viewOrigin && x < widthResolution + viewOrigin &&
 				 y > heightResolution * 2 + viewOrigin && y < heightResolution * 3 + viewOrigin) {
-			Logger.Debug("Rotate");
 			m_CurrentTransformationState = e_STATE.ROTATE;
+		}
+		
+		else {
+			m_CurrentTransformationState = e_STATE.NONE;
 		}
 	}
 
@@ -274,9 +285,12 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				"mouse dragged",
 				mouseEvent.getX(),
 				mouseEvent.getY()));
-		
+		Logger.Debug(m_CurrentTransformationState.toString());
 		if (e_STATE.TRANSLATE == m_CurrentTransformationState) {
-			
+			m_CurrentTransformation = new Transformation(
+					Matrix.translate(
+							mouseEvent.getX() - m_StartPoint.X(),
+							mouseEvent.getY() - m_StartPoint.Y()));
 		}
 		
 		else if (e_STATE.SCALE == m_CurrentTransformationState) {
