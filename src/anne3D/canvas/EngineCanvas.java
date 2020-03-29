@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
 import java.util.Objects;
 import anne3D.Main;
 import anne3D.configurations.Scene;
@@ -16,7 +15,6 @@ import anne3D.math.Edge;
 import anne3D.math.Matrix;
 import anne3D.math.Point;
 import anne3D.math.Transformation;
-import anne3D.math.Vector3;
 import anne3D.utilities.Logger;
 
 final public class EngineCanvas extends Canvas implements MouseListener, MouseMotionListener {
@@ -30,7 +28,6 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	private static final long serialVersionUID = 1L;
 	private Point m_StartPoint;
 	private View m_View;
-	private ArrayList<Edge> m_Edges;
 	private Scene m_Scene;
 	private Transformation m_CurrentTransformation;
 	private Transformation m_AccumulatedTransformation;
@@ -48,15 +45,6 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				view.ViewWidth + View.g_WINDOW_MARGIN);
 		addMouseListener(this);
 		addMouseMotionListener(this);
-		
-		final ArrayList<Edge> transformedScene = new ArrayList<Edge>();
-		for (Edge edge : scene.Edges) {
-			Point p1 = m_View.ViewTransformation.applyTransformation(edge.GetFirstPoint());
-			Point p2 = m_View.ViewTransformation.applyTransformation(edge.GetSecondPoint());
-			transformedScene.add(new Edge(p1, p2));
-		}
-		
-		m_Edges = transformedScene;
 	}
 	
 	public EngineCanvas(final Scene scene, final View view, Color canvasColor) {
@@ -184,7 +172,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent mouseEvent) {
+	public void mouseEntered(final MouseEvent mouseEvent) {
 		Logger.Debug(String.format("[%s] x=%d,y=%d",
 				"mouse entered",
 				mouseEvent.getX(),
@@ -193,7 +181,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	}
 
 	@Override
-	public void mouseExited(MouseEvent mouseEvent) {
+	public void mouseExited(final MouseEvent mouseEvent) {
 		Logger.Debug(String.format("[%s] x=%d,y=%d",
 				"mouse exited",
 				mouseEvent.getX(),
@@ -201,7 +189,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	}
 
 	@Override
-	public void mousePressed(MouseEvent mouseEvent) {
+	public void mousePressed(final MouseEvent mouseEvent) {
 		Logger.Debug(String.format("[%s] x=%d,y=%d",
 				"mouse pressed",
 				mouseEvent.getX(),
@@ -273,7 +261,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent mouseEvent) {
+	public void mouseReleased(final MouseEvent mouseEvent) {
 		Logger.Debug(String.format("[%s] x=%d,y=%d",
 				"mouse released",
 				mouseEvent.getX(),
@@ -303,7 +291,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	}
 	
 	@Override
-	public void mouseDragged(MouseEvent mouseEvent) {
+	public void mouseDragged(final MouseEvent mouseEvent) {
 		Logger.Debug(String.format("[%s] x=%d,y=%d",
 				"mouse dragged",
 				mouseEvent.getX(),
@@ -329,7 +317,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent mouseEvent) {
+	public void mouseMoved(final MouseEvent mouseEvent) {
 		Logger.Debug(String.format("[%s] x=%d,y=%d",
 				"mouse moved",
 				mouseEvent.getX(),
