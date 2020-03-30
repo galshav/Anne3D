@@ -10,11 +10,11 @@ import java.util.Objects;
 import anne3D.Main;
 import anne3D.configurations.Scene;
 import anne3D.configurations.View;
-import anne3D.math.ColumnVector;
 import anne3D.math.Edge;
 import anne3D.math.Matrix;
 import anne3D.math.Point;
 import anne3D.math.Transformation;
+import anne3D.math.Vector3;
 import anne3D.utilities.Logger;
 
 final public class EngineCanvas extends Canvas implements MouseListener, MouseMotionListener {
@@ -177,7 +177,6 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				"mouse entered",
 				mouseEvent.getX(),
 				mouseEvent.getY()));
-		
 	}
 
 	@Override
@@ -267,6 +266,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				mouseEvent.getX(),
 				mouseEvent.getY()));
 		m_AccumulatedTransformation = m_AccumulatedTransformation.compose(m_CurrentTransformation);
+		m_CurrentTransformation = new Transformation(Matrix.identity(3));
 	}
 
 	private void setTranslateTransform(final MouseEvent mouseEvent) {
@@ -279,15 +279,20 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	private void setScaleTransform(final MouseEvent mouseEvent) {
 		final double centerX = m_View.ViewWidth / 2 + View.g_WINDOW_MARGIN;
 		final double centerY = m_View.ViewHeight / 2 + View.g_WINDOW_MARGIN;
-		final ColumnVector centerVector = new ColumnVector(new double[] {centerX, centerY});
-		final ColumnVector destinationVector = new ColumnVector(new double[] {mouseEvent.getX(), mouseEvent.getY()});
-		final ColumnVector sourceVector = new ColumnVector(new double[] {m_StartPoint.X(), m_StartPoint.Y()});
-		final double scaleFactor = destinationVector.minus(centerVector).vectorSize() / 
-								   sourceVector.minus(centerVector).vectorSize();
+		final Vector3 centerVector = new Vector3(centerX, centerY, 0);
+		final Vector3 destinationVector = new Vector3(mouseEvent.getX(), mouseEvent.getY(), 0);
+		final Vector3 sourceVector = new Vector3(m_StartPoint.X(), m_StartPoint.Y(), 0);
+		final double scaleFactor = 
+				destinationVector.minus(centerVector).vectorSize() / 
+				sourceVector	 .minus(centerVector).vectorSize();
 		m_CurrentTransformation = new Transformation(
 			 Matrix.translate(centerX, centerY).times
 			(Matrix.scale(scaleFactor, scaleFactor).times
 			(Matrix.translate(-centerX, -centerY))));
+	}
+	
+	private void setRotateTransform(final MouseEvent mouseEvent) {
+		
 	}
 	
 	@Override
@@ -306,7 +311,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		}
 		
 		else if (e_STATE.ROTATE == m_CurrentTransformationState) {
-			
+			setRotateTransform(mouseEvent);
 		}
 		
 		else {

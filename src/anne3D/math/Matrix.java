@@ -54,26 +54,14 @@ public class Matrix {
 		return Arrays.deepEquals(((Matrix)other).m_Data , this.m_Data);
 	}
 	
-	@SuppressWarnings("unchecked")
-	private <T extends Matrix> T createSpecificMatrixType(final T other) {
-		if (other instanceof ColumnVector) {
-			return (T) new ColumnVector(other.m_NumberOfRows);
-		}
-		
-		else if (other instanceof RowVector) {
-			return (T) new RowVector(other.m_NumberOfColumns);
-		}
-		
-		return (T) new Matrix(m_NumberOfRows, m_NumberOfColumns);
-	}
-	
-	public <T extends Matrix> T plus(final T other) {
+	public Matrix plus(final Matrix other) {
 		if ((m_NumberOfRows    != other.m_NumberOfRows) ||
 			(m_NumberOfColumns != other.m_NumberOfColumns)) {
 			throw new RuntimeException("Can not add matrix with different dimensions.");
 		}
 		
-		T result = this.createSpecificMatrixType(other);
+		//T result = this.createSpecificMatrixType(other);
+		Matrix result = new Matrix(m_NumberOfRows, m_NumberOfColumns);
 		for (int i = 0; i < m_NumberOfRows; ++i) {
 			for (int j = 0; j < m_NumberOfColumns; ++j) {
 				result.m_Data[i][j] = m_Data[i][j] + other.m_Data[i][j];
@@ -83,13 +71,13 @@ public class Matrix {
 		return result;
 	}
 	
-	public <T extends Matrix> T minus(final T other) {
+	public Matrix minus(final Matrix other) {
 		if ((m_NumberOfRows	   != other.m_NumberOfRows) ||
 			(m_NumberOfColumns != other.m_NumberOfColumns)) {
 				throw new RuntimeException("Can not add matrix with different dimensions.");
 		}
 		
-		T result = this.createSpecificMatrixType(other);
+		Matrix result = new Matrix(m_NumberOfRows, m_NumberOfColumns);
 		for (int i = 0; i < m_NumberOfRows; ++i) {
 			for (int j = 0; j < m_NumberOfColumns; ++j) {
 				result.m_Data[i][j] = m_Data[i][j] - other.m_Data[i][j];

@@ -21,4 +21,15 @@ public class ColumnVector extends Matrix {
 		
 		return java.lang.Math.sqrt(sum);
 	}
+	
+	@Override
+	public ColumnVector minus(final Matrix other) {
+		Matrix resultMatrix = super.minus(other);
+		ColumnVector resultVector = new ColumnVector(m_NumberOfRows);
+		for (int i = 0; i < m_NumberOfRows; ++i) {
+			resultVector.m_Data[i][0] = resultMatrix.getValue(i, 0);
+		}
+		
+		return resultVector;
+	}
 }
