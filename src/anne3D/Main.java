@@ -8,6 +8,7 @@ import java.lang.Exception;
 import anne3D.canvas.EngineCanvas;
 import anne3D.configurations.Scene;
 import anne3D.configurations.View;
+import anne3D.math.Vector2;
 import anne3D.utilities.Logger;
 
 final public class Main {
@@ -22,6 +23,8 @@ final public class Main {
 	// TODO: get scene and view file from main args.
 	public static void main(final String[] args) throws Exception {
 		try {
+			Vector2 vec = new Vector2(1,-1);
+			double angle = vec.angle();
 			Logger.Info("Starting engine.");
 			launch(args);
 		}

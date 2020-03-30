@@ -14,7 +14,7 @@ import anne3D.math.Edge;
 import anne3D.math.Matrix;
 import anne3D.math.Point;
 import anne3D.math.Transformation;
-import anne3D.math.Vector3;
+import anne3D.math.Vector2;
 import anne3D.utilities.Logger;
 
 final public class EngineCanvas extends Canvas implements MouseListener, MouseMotionListener {
@@ -195,51 +195,6 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				mouseEvent.getY()));
 		m_StartPoint = new Point(mouseEvent.getX(), mouseEvent.getY());
 		setTransformationTypeByPressedPointCoordinates(m_StartPoint);
-		// Find the required transformation according to start point.
-		
-		// Translate.
-		/*for (int i = 0; i < x.length; ++i) {
-			Matrix result = Matrix.translate(10,10).times(new Matrix(new double[][] {
-				{x[i]},
-				{y[i]},
-				{1}
-				
-			x[i] = (int)result.getValue(0, 0);
-			y[i] = (int)result.getValue(1, 0);
-
-		}*/
-		
-		/* Scale.
-		for (int i = 0; i < x.length; ++i) {
-			Matrix result = Matrix.scale(2,2).times(new Matrix(new double[][] {
-				{x[i]},
-				{y[i]},
-				{1}
-			}));
-			
-			x[i] = (int)result.getValue(0, 0);
-			y[i] = (int)result.getValue(1, 0);
-		}*/
-		
-		/* Scale + Transle.
-		for (int i = 0; i < x.length; ++i) {
-			Matrix transformationMatrix = 
-					Matrix.translate(100, 100).times
-					(Matrix.scale(2,2).times
-					(Matrix.translate(-100, -100)));
-			
-			
-			Matrix result = transformationMatrix.times(new Matrix(new double[][] {
-				{x[i]},
-				{y[i]},
-				{1}
-			}));
-			
-			x[i] = (int)result.getValue(0, 0);
-			y[i] = (int)result.getValue(1, 0);
-		}
-		*/
-		
 		/*
 		for (int i = 0; i < x.length; ++i) {
 			Matrix transformationMatrix = 
@@ -279,12 +234,12 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	private void setScaleTransform(final MouseEvent mouseEvent) {
 		final double centerX = m_View.ViewWidth / 2 + View.g_WINDOW_MARGIN;
 		final double centerY = m_View.ViewHeight / 2 + View.g_WINDOW_MARGIN;
-		final Vector3 centerVector = new Vector3(centerX, centerY, 0);
-		final Vector3 destinationVector = new Vector3(mouseEvent.getX(), mouseEvent.getY(), 0);
-		final Vector3 sourceVector = new Vector3(m_StartPoint.X(), m_StartPoint.Y(), 0);
+		final Vector2 centerVector = new Vector2(centerX, centerY);
+		final Vector2 destinationVector = new Vector2(mouseEvent.getX(), mouseEvent.getY());
+		final Vector2 sourceVector = new Vector2(m_StartPoint.X(), m_StartPoint.Y());
 		final double scaleFactor = 
-				destinationVector.minus(centerVector).vectorSize() / 
-				sourceVector	 .minus(centerVector).vectorSize();
+				destinationVector.minus(centerVector).size() / 
+				sourceVector	 .minus(centerVector).size();
 		m_CurrentTransformation = new Transformation(
 			 Matrix.translate(centerX, centerY).times
 			(Matrix.scale(scaleFactor, scaleFactor).times
@@ -292,7 +247,18 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	}
 	
 	private void setRotateTransform(final MouseEvent mouseEvent) {
-		
+		final double centerX = m_View.ViewWidth / 2 + View.g_WINDOW_MARGIN;
+		final double centerY = m_View.ViewHeight / 2 + View.g_WINDOW_MARGIN;
+		final Vector2 centerVector = new Vector2(centerX, centerY);
+		final Vector2 destinationVector = new Vector2(mouseEvent.getX(), mouseEvent.getY());
+		final Vector2 sourceVector = new Vector2(m_StartPoint.X(), m_StartPoint.Y());
+		final double angle = 
+				destinationVector.minus(centerVector).angle() - 
+				sourceVector	 .minus(centerVector).angle();
+		m_CurrentTransformation = new Transformation( 
+				Transformation.translate(centerX, centerY).times
+				(Transformation.rotate2D(angle).times
+				(Transformation.translate(-centerX, -centerY))));
 	}
 	
 	@Override

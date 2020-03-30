@@ -13,7 +13,7 @@ public class ColumnVector extends Matrix {
 		}
 	}
 	
-	public double vectorSize() {
+	public double size() {
 		double sum = 0;
 		for (int i = 0; i < m_NumberOfRows; ++i) {
 			sum += java.lang.Math.pow(m_Data[i][0], 2);
@@ -25,6 +25,17 @@ public class ColumnVector extends Matrix {
 	@Override
 	public ColumnVector minus(final Matrix other) {
 		Matrix resultMatrix = super.minus(other);
+		ColumnVector resultVector = new ColumnVector(m_NumberOfRows);
+		for (int i = 0; i < m_NumberOfRows; ++i) {
+			resultVector.m_Data[i][0] = resultMatrix.getValue(i, 0);
+		}
+		
+		return resultVector;
+	}
+	
+	@Override
+	public ColumnVector plus(final Matrix other) {
+		Matrix resultMatrix = super.plus(other);
 		ColumnVector resultVector = new ColumnVector(m_NumberOfRows);
 		for (int i = 0; i < m_NumberOfRows; ++i) {
 			resultVector.m_Data[i][0] = resultMatrix.getValue(i, 0);

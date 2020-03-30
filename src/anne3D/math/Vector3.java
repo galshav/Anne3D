@@ -2,12 +2,22 @@ package anne3D.math;
 
 public class Vector3 extends ColumnVector {
 	
+	final public double X;
+	final public double Y;
+	final public double Z;
+	
 	public Vector3() {
 		super(3);
+		X = 0;
+		Y = 0;
+		Z = 0;
 	}
 	
 	public Vector3(final double x, final double y, final double z) {
 		super(new double[] {x, y, z});
+		X = x;
+		Y = y;
+		Z = z;
 	}
 	
 	@Override
