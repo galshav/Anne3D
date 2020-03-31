@@ -195,23 +195,6 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				mouseEvent.getY()));
 		m_StartPoint = new Point(mouseEvent.getX(), mouseEvent.getY());
 		setTransformationTypeByPressedPointCoordinates(m_StartPoint);
-		/*
-		for (int i = 0; i < x.length; ++i) {
-			Matrix transformationMatrix = 
-					Transformation.translate(150, 150).times
-					(Transformation.rotate2D(45).times
-					(Transformation.translate(-150, -150)));
-			
-			Matrix result = transformationMatrix.times(new Matrix(new double[][] {
-				{x[i]},
-				{y[i]},
-				{1}
-			}));
-
-			x[i] = (int)result.getValue(0, 0);
-			y[i] = (int)result.getValue(1, 0);
-		}
-		*/
 	}
 
 	@Override
