@@ -8,7 +8,6 @@ import java.lang.Exception;
 import anne3D.canvas.EngineCanvas;
 import anne3D.configurations.Scene;
 import anne3D.configurations.View;
-import anne3D.math.Vector2;
 import anne3D.utilities.Logger;
 
 final public class Main {
