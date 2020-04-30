@@ -34,7 +34,7 @@ public class Vector2 extends ColumnVector {
 	}
 	
 	public double angle() {
-		double angle = java.lang.Math.atan((X / Y)) * 180 / java.lang.Math.PI;
+		double angle = java.lang.Math.atan((Y / X)) * 180 / java.lang.Math.PI;
 		
 		if (X < 0) {
 			angle += 180;

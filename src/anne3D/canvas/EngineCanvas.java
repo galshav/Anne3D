@@ -47,7 +47,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		addMouseMotionListener(this);
 	}
 	
-	public EngineCanvas(final Scene scene, final View view, Color canvasColor) {
+	public EngineCanvas(final Scene scene, final View view, final Color canvasColor) {
 		this(scene, view);
 		setBackground(canvasColor);
 	}
@@ -98,6 +98,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		paintClipBorder(graphics);
 		paintGrid(graphics);
 		graphics.setColor(Color.GREEN);
+		graphics.drawString("Press 'C' for clliping.", 5, 15);
 		final Transformation totalTransformation = 
 				m_CurrentTransformation.compose(
 				m_AccumulatedTransformation.compose(
@@ -217,12 +218,14 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	private void setScaleTransform(final MouseEvent mouseEvent) {
 		final double centerX = m_View.ViewWidth / 2 + View.g_WINDOW_MARGIN;
 		final double centerY = m_View.ViewHeight / 2 + View.g_WINDOW_MARGIN;
-		final Vector2 centerVector = new Vector2(centerX, centerY);
-		final Vector2 destinationVector = new Vector2(mouseEvent.getX(), mouseEvent.getY());
-		final Vector2 sourceVector = new Vector2(m_StartPoint.X(), m_StartPoint.Y());
-		final double scaleFactor = 
-				destinationVector.minus(centerVector).size() / 
-				sourceVector	 .minus(centerVector).size();
+		//final Vector2 centerVector = new Vector2(centerX, centerY);
+		final Vector2 destinationVector = new Vector2(mouseEvent.getX() - centerX, (mouseEvent.getY() - centerY) * -1);
+		final Vector2 sourceVector = new Vector2(m_StartPoint.X() - centerX, (m_StartPoint.Y() - centerY) * -1);
+		//final double scaleFactor = 
+		//		destinationVector.minus(centerVector).size() / 
+		//		sourceVector	 .minus(centerVector).size();
+		final double scaleFactor =
+				destinationVector.size() / sourceVector.size();
 		m_CurrentTransformation = new Transformation(
 			 Matrix.translate(centerX, centerY).times
 			(Matrix.scale(scaleFactor, scaleFactor).times
@@ -232,12 +235,14 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	private void setRotateTransform(final MouseEvent mouseEvent) {
 		final double centerX = m_View.ViewWidth / 2 + View.g_WINDOW_MARGIN;
 		final double centerY = m_View.ViewHeight / 2 + View.g_WINDOW_MARGIN;
-		final Vector2 centerVector = new Vector2(centerX, centerY);
-		final Vector2 destinationVector = new Vector2(mouseEvent.getX(), mouseEvent.getY());
-		final Vector2 sourceVector = new Vector2(m_StartPoint.X(), m_StartPoint.Y());
+		//final Vector2 centerVector = new Vector2(0, 0);
+		final Vector2 destinationVector = new Vector2(mouseEvent.getX() - centerX, (mouseEvent.getY() - centerY) * -1);
+		final Vector2 sourceVector = new Vector2(m_StartPoint.X() - centerX, (m_StartPoint.Y() - centerY) * -1);
+		//final double angle = 
+		//		destinationVector.minus(centerVector).angle() - 
+		//		sourceVector	 .minus(centerVector).angle();
 		final double angle = 
-				destinationVector.minus(centerVector).angle() - 
-				sourceVector	 .minus(centerVector).angle();
+				destinationVector.angle() - sourceVector.angle();
 		m_CurrentTransformation = new Transformation( 
 				Transformation.translate(centerX, centerY).times
 				(Transformation.rotate2D(angle).times

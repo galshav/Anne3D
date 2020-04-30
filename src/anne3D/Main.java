@@ -23,8 +23,6 @@ final public class Main {
 	// TODO: get scene and view file from main args.
 	public static void main(final String[] args) throws Exception {
 		try {
-			Vector2 vec = new Vector2(1,-1);
-			double angle = vec.angle();
 			Logger.Info("Starting engine.");
 			launch(args);
 		}
