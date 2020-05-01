@@ -9,7 +9,9 @@ import java.awt.event.MouseMotionListener;
 import java.util.Objects;
 import anne3D.Main;
 import anne3D.configurations.Scene;
+import anne3D.configurations.Scene3D;
 import anne3D.configurations.View;
+import anne3D.configurations.View3D;
 import anne3D.math.Edge;
 import anne3D.math.Matrix;
 import anne3D.math.Point;
@@ -27,17 +29,17 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	
 	private static final long serialVersionUID = 1L;
 	private Point m_StartPoint;
-	private View m_View;
-	private Scene m_Scene;
+	private View3D m_View;
+	private Scene3D m_Scene;
 	private Transformation m_CurrentTransformation;
 	private Transformation m_AccumulatedTransformation;
 	private e_STATE m_CurrentTransformationState;
 	
-	public EngineCanvas(final Scene scene, final View view) {
+	public EngineCanvas(final Scene3D scene, final View3D view) {
 		Objects.requireNonNull(scene, "scene argument can not be null.");
 		Objects.requireNonNull(view, "view argument can not be null.");
-		m_CurrentTransformation = new Transformation(Matrix.identity(3));
-		m_AccumulatedTransformation = new Transformation(Matrix.identity(3));
+		m_CurrentTransformation = new Transformation(Matrix.identity(4));
+		m_AccumulatedTransformation = new Transformation(Matrix.identity(4));
 		m_View = view;
 		m_Scene = scene;
 		m_CurrentTransformationState = e_STATE.NONE;
@@ -47,7 +49,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		addMouseMotionListener(this);
 	}
 	
-	public EngineCanvas(final Scene scene, final View view, final Color canvasColor) {
+	public EngineCanvas(final Scene3D scene, final View3D view, final Color canvasColor) {
 		this(scene, view);
 		setBackground(canvasColor);
 	}
@@ -102,7 +104,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		final Transformation totalTransformation = 
 				m_CurrentTransformation.compose(
 				m_AccumulatedTransformation.compose(
-				m_View.ViewTransformation));
+				m_View.cameraTransformation));
 		
 		//m_AccumulatedTransformation = m_AccumulatedTransformation.compose(m_CurrentTransformation);
 		for (final Edge origEdge : m_Scene.Edges) {

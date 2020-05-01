@@ -40,7 +40,7 @@ final public class Scene3D {
 	 *		NUMBER - NUMBER_OF_EDGES
 	 *		LIST   - EDGES[NUMBER_OF_EDGES]
 	 */
-	public static Scene loadSceneFromFile(final String filePath) throws IOException {
+	public static Scene3D loadSceneFromFile(final String filePath) throws IOException {
 		Objects.requireNonNull(filePath, "filePath argument can not be null.");
 		final File sceneFile = new File(filePath);
 		final List<String> content = sceneFile.read();
@@ -68,7 +68,7 @@ final public class Scene3D {
 					new Point(coordinates.get(Integer.parseInt(edgeStringArray[1])))));
 		}
 		
-		return new Scene(
+		return new Scene3D(
 				numberOfVertices,
 				coordinates,
 				numberOfEdges,

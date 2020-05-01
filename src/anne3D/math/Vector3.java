@@ -51,6 +51,6 @@ public class Vector3 extends ColumnVector {
 		return new Vector3(
 				result.getValue(0, 0),
 				result.getValue(1, 0),
-				result.getValue(1, 0));
+				result.getValue(2, 0));
 	}
 }

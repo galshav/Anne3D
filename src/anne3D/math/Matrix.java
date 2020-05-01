@@ -183,4 +183,15 @@ public class Matrix {
 		
 		return rotationMatrix;
 	}
+	
+	public static Matrix changeCoordinates(final ColumnVector ...coordinates) {
+		final Matrix result = Matrix.identity(coordinates.length + 1); 
+		for (int i = 0; i < coordinates.length; ++i) {
+			for (int j = 0; j < coordinates.length; ++j) {
+				result.m_Data[i][j] = coordinates[i].getValue(j, 0);
+			}
+		}
+		
+		return result;
+	}
 }
