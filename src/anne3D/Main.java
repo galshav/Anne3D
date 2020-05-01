@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.Exception;
 import anne3D.canvas.EngineCanvas;
 import anne3D.configurations.Scene;
+import anne3D.configurations.Scene3D;
 import anne3D.configurations.View;
 import anne3D.utilities.Logger;
 
@@ -37,6 +38,7 @@ final public class Main {
 	private static void launch(final String[] args) throws IOException {
 		
 		Frame frame = new Frame(g_TITLE);
+		Scene scene3D = Scene3D.loadSceneFromFile("c:\\users\\galsh\\desktop\\example3d.scn");
 		EngineCanvas engineCanvas = new EngineCanvas(
 				Scene.loadSceneFromFile("c:\\users\\galsh\\desktop\\example.scn"),
 				View.loadViewFromFile("c:\\users\\galsh\\desktop\\example.viw"),

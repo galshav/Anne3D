@@ -87,6 +87,17 @@ public class Matrix {
 		return result;
 	}
 	
+	public Matrix divide(final double factor) {
+		final Matrix result = new Matrix(m_NumberOfRows, m_NumberOfColumns);
+		for (int i = 0; i < result.m_NumberOfRows; ++i) {
+			for (int j = 0; j < result.m_NumberOfColumns; ++j) {
+				result.m_Data[i][j] = this.m_Data[i][j] / factor;
+			}
+		}
+		
+		return result;
+	}
+	
 	public Matrix times(final Matrix other) {
 		if (m_NumberOfColumns != other.m_NumberOfRows) {
 			throw new RuntimeException("Can not multiply matrices with illegal dimensions.");
