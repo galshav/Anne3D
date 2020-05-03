@@ -32,8 +32,9 @@ public class View3D {
 	final public double WindowBottom;
 	final public int ViewWidth;
 	final public int ViewHeight;
-	final public Transformation cameraTransformation;
-	final public Transformation deviceTransformation;
+	final public Transformation CameraTransformation;
+	final public Transformation ProjectionTransformation;
+	final public Transformation DeviceTransformation;
 	
 	private View3D(
 			final Vector3 position,
@@ -54,7 +55,6 @@ public class View3D {
 		WindowBottom = windowBottom;
 		ViewWidth = viewWidth;
 		ViewHeight = viewHeight;
-		deviceTransformation = null;
 		/*
 		Matrix marginTranslateTransformation = Matrix.translate(
 				(ViewWidth  / 2) + (g_WINDOW_MARGIN / 2), 
@@ -84,8 +84,21 @@ public class View3D {
 		Vector3 cameraY = cameraZ.cross(cameraX);
 		Matrix coordinateSystemMatrix = Matrix.changeCoordinates(
 				cameraX, cameraY, cameraZ);
-		cameraTransformation = new Transformation(
+		CameraTransformation = new Transformation(
 				coordinateSystemMatrix.times(translationToWorldOrigin));
+		ProjectionTransformation = Transformation.orthographicProjection();
+		Matrix originTranslateTransformation = Matrix.translate(-WindowLeft, -WindowBottom, 0);
+		final double scaleWidth = ViewWidth / (WindowRight - WindowLeft);
+		final double scaleHeight = ViewHeight / (WindowTop - WindowBottom);
+		final Matrix scaleTransformation = Matrix.scale(scaleWidth, scaleHeight * (-1), 0);
+		final Matrix marginTranslateTransformation = Matrix.translate(
+				(g_WINDOW_MARGIN / 2), 
+				(ViewHeight) + (g_WINDOW_MARGIN / 2),
+				0);
+		DeviceTransformation = new Transformation(
+				marginTranslateTransformation.times(
+				scaleTransformation.times(
+				originTranslateTransformation)));
 	}
 	
 	public static View3D loadViewFromFile(final String filePath) throws IOException {		

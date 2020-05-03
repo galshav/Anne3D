@@ -10,6 +10,7 @@ import anne3D.configurations.Scene;
 import anne3D.configurations.Scene3D;
 import anne3D.configurations.View;
 import anne3D.configurations.View3D;
+import anne3D.math.Vector2;
 import anne3D.math.Vector3;
 import anne3D.utilities.Logger;
 

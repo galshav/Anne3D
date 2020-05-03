@@ -54,7 +54,8 @@ final public class Scene3D {
 			coordinates.add(new Point
 					(Double.parseDouble(coordinateStringArray[0]),
 					 Double.parseDouble(coordinateStringArray[1]),
-					 Double.parseDouble(coordinateStringArray[2])));
+					 Double.parseDouble(coordinateStringArray[2]),
+					 1));
 		}
 		
 		final ArrayList<Edge> edges = new ArrayList<Edge>();

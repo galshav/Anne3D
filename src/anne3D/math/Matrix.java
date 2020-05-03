@@ -3,6 +3,8 @@ package anne3D.math;
 import java.lang.RuntimeException;
 import java.util.Arrays;
 
+import anne3D.utilities.Logger;
+
 public class Matrix {
 	
 	protected final int m_NumberOfRows;
@@ -119,12 +121,14 @@ public class Matrix {
 		Matrix newPointAsMatrix = this.times(new Matrix(new double[][] {
 			{point.X()},
 			{point.Y()},
-			{point.Z()}}));
+			{point.Z()},
+			{point.W()}}));
 		
 		return new Point(
 				newPointAsMatrix.getValue(0, 0),
 				newPointAsMatrix.getValue(1, 0),
-				newPointAsMatrix.getValue(2, 0));
+				newPointAsMatrix.getValue(2, 0),
+				newPointAsMatrix.getValue(3, 0));
 	}
 	
 	public Matrix transpose() {

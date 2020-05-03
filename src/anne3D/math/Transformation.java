@@ -52,4 +52,43 @@ final public class Transformation {
 		
 		return rotationMatrix;
 	}
+	
+	public static Matrix rotate3DByX(final double angleInDeg) {
+		final Matrix4 rotationMatrix = new Matrix4(new double[] {
+				1									   , 0									  , 0									 , 0,
+			    0, Math.cos(Math.toRadians(angleInDeg)), -Math.sin(Math.toRadians(angleInDeg)), 0  									 ,
+				0									   , Math.sin(Math.toRadians(angleInDeg)) , Math.cos(Math.toRadians(angleInDeg)) , 0,
+				0									   , 0									  , 0                                    , 1
+			});
+		
+		return rotationMatrix;
+	}
+	
+	public static Matrix rotate3DByY(final double angleInDeg) {
+		final Matrix4 rotationMatrix = new Matrix4(new double[] {
+				Math.cos(Math.toRadians(angleInDeg)), 0									  , -Math.sin(Math.toRadians(angleInDeg)), 0,
+			    0									, 1									  , 0, 0,
+			    Math.sin(Math.toRadians(angleInDeg)), 0				 					  , Math.cos(Math.toRadians(angleInDeg)) , 0,
+				0									, 0									  , 0									 , 1
+			});
+		
+		return rotationMatrix;
+	}
+	
+	public static Matrix rotate3DByZ(final double angleInDeg) {
+		final Matrix4 rotationMatrix = new Matrix4(new double[] {
+				Math.cos(Math.toRadians(angleInDeg)), Math.sin(Math.toRadians(angleInDeg)), 0, 0,
+			   -Math.sin(Math.toRadians(angleInDeg)), Math.cos(Math.toRadians(angleInDeg)), 0, 0,
+				0									, 0				 					  , 1, 0,
+				0									, 0									  , 0, 1
+			});
+		
+		return rotationMatrix;
+	}
+	
+	public static Transformation orthographicProjection() {
+		final Matrix result = Matrix.identity(4);
+		result.m_Data[2][2] = 0;
+		return new Transformation(result);
+	}
 }
