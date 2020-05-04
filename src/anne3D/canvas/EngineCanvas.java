@@ -1,5 +1,7 @@
 package anne3D.canvas;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,7 +12,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Objects;
 import anne3D.Main;
-import anne3D.configurations.Scene;
 import anne3D.configurations.Scene3D;
 import anne3D.configurations.View;
 import anne3D.configurations.View3D;
@@ -29,6 +30,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		NONE
 	}
 	
+	private char m_RotationAxis = 'z';
 	private static final long serialVersionUID = 1L;
 	private Point m_StartPoint;
 	private View3D m_View;
@@ -259,9 +261,20 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				destinationVector.angle() - 
 				sourceVector.angle();
 
+		Matrix rotationMatrix = null;
+		if (m_RotationAxis == 'x') {
+			rotationMatrix = Transformation.rotate3DByX(angle);
+		}
+		else if (m_RotationAxis == 'y') {
+			rotationMatrix = Transformation.rotate3DByY(angle);
+		}
+		
+		else {
+			rotationMatrix = Transformation.rotate3DByZ(angle);
+		}
 		m_CurrentTransformation = new Transformation(
 				Matrix.translate(0,0,-10.5).times(
-				Transformation.rotate3DByY(angle).times(
+				rotationMatrix.times(
 				Matrix.translate(0,0,10.5))));
 	}
 	
@@ -308,7 +321,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	@Override
 	public void keyReleased(KeyEvent e) {
 		Logger.Debug(String.format("key pressed: %s", e.getKeyChar()));
-		
+		m_RotationAxis = e.getKeyChar();
 	}
 
 	@Override
