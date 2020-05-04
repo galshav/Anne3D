@@ -32,6 +32,7 @@ public class View3D {
 	final public double WindowBottom;
 	final public int ViewWidth;
 	final public int ViewHeight;
+	public Point ObjectCenter;
 	final public Transformation CameraTransformation;
 	final public Transformation ProjectionTransformation;
 	final public Transformation DeviceTransformation;
@@ -55,24 +56,9 @@ public class View3D {
 		WindowBottom = windowBottom;
 		ViewWidth = viewWidth;
 		ViewHeight = viewHeight;
-		/*
-		Matrix marginTranslateTransformation = Matrix.translate(
-				(ViewWidth  / 2) + (g_WINDOW_MARGIN / 2), 
-				(ViewHeight / 2) + (g_WINDOW_MARGIN / 2));
-		Matrix scaleTransformation = Matrix.scale(
-				(ViewWidth  / WindowWidth),
-				(ViewHeight / WindowHeight) * (-1));
-		Matrix rotateTransformation = Matrix.rotate(Angle);
-		Matrix originTranslateTransformation = Matrix.translate(
-				-Origin.X(),
-				- Origin.Y());
 		
-		ViewTransformation = new Transformation(
-				marginTranslateTransformation.times(
-				scaleTransformation).times(
-				rotateTransformation).times(
-				originTranslateTransformation));
-		*/
+		ObjectCenter = new Point(0, 0, -9.5, 1);
+
 		Matrix translationToWorldOrigin = Matrix.translate(
 				-Position.X,
 				-Position.Y,
