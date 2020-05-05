@@ -30,7 +30,6 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		NONE
 	}
 	
-	private Boolean g_First = true;
 	private char m_RotationAxis = 'z';
 	private static final long serialVersionUID = 1L;
 	private Point m_StartPoint;
@@ -107,7 +106,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		paintClipBorder(graphics);
 		paintGrid(graphics);
 		graphics.setColor(Color.magenta);
-		graphics.drawString("Press 'C' for clliping.", 5, 15);
+		//graphics.drawString("Press 'C' for clliping.", 5, 15);
 		
 		final Transformation modelTransformation = 
 				m_CurrentTransformation.compose(
@@ -131,13 +130,6 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 					(int)p2.X(),
 					(int)p2.Y());
 		}
-		
-		if (g_First == true) {
-			g_First = false;
-			return;
-		}
-		
-		//m_View.ObjectCenter = modelTransformation.applyTransformation(m_View.ObjectCenter);
 	}
 	
 	private void setTransformationTypeByPressedPointCoordinates(final Point point) {
@@ -233,9 +225,9 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				m_CurrentTransformation.compose(
 				m_AccumulatedTransformation.compose(
 				m_View.CameraTransformation));
-		m_View.ObjectCenter = modelTransformation.applyTransformation(new Point(0, 0, -9.5, 1));
+		//m_View.ObjectCenter = modelTransformation.applyTransformation(new Point(0, 0, -9.5, 1));
 		m_CurrentTransformation = new Transformation(Matrix.identity(4));
-		Logger.Debug(String.format("Center:(%f, %f, %f)", m_View.ObjectCenter.X(), m_View.ObjectCenter.Y(), m_View.ObjectCenter.Z()));
+		//Logger.Debug(String.format("Center:(%f, %f, %f)", m_View.ObjectCenter.X(), m_View.ObjectCenter.Y(), m_View.ObjectCenter.Z()));
 	}
 
 	private void setTranslateTransform(final MouseEvent mouseEvent) {
@@ -259,13 +251,11 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		final double scaleFactor =
 				destinationVector.size() / sourceVector.size();
 		Logger.Debug(String.format("%f", scaleFactor));
-		final double centerObjectX = m_View.ObjectCenter.X();
-		final double centerObjectY = m_View.ObjectCenter.Y();
-		final double centerObjectZ = m_View.ObjectCenter.Z();
+		final double deltaZ = this.m_View.Position.Z - this.m_View.LookAt.Z;
 		m_CurrentTransformation = new Transformation(
-			 //Matrix.translate(centerObjectX + 0.5, centerObjectY + 0.5, centerObjectZ + 9.5).times
-			(Matrix.scale(scaleFactor, scaleFactor, scaleFactor)));//.times
-			//(Matrix.translate(-centerObjectX - 0.5, -centerObjectY - 0.5, centerObjectZ - 9.5))));
+			 Matrix.translate(0, 0, deltaZ).times
+			(Matrix.scale(scaleFactor, scaleFactor, scaleFactor).times
+			(Matrix.translate(-0, -0, -deltaZ))));
 	}
 	
 	private void setRotateTransform(final MouseEvent mouseEvent) {
@@ -298,13 +288,11 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 			rotationMatrix = Transformation.rotate3DByZ(angle);
 		}
 		
-		final double centerObjectX = m_View.ObjectCenter.X();
-		final double centerObjectY = m_View.ObjectCenter.Y();
-		final double centerObjectZ = m_View.ObjectCenter.Z();
+		final double deltaZ = this.m_View.Position.Z - this.m_View.LookAt.Z;
 		m_CurrentTransformation = new Transformation(
-				Matrix.translate(centerObjectX, centerObjectY, centerObjectZ).times(
+				Matrix.translate(0, 0, deltaZ).times(
 				rotationMatrix.times(
-				Matrix.translate(-centerObjectX, -centerObjectY, -centerObjectZ))));
+				Matrix.translate(-0, -0, -deltaZ))));
 	}
 	
 	@Override

@@ -32,7 +32,7 @@ public class View3D {
 	final public double WindowBottom;
 	final public int ViewWidth;
 	final public int ViewHeight;
-	public Point ObjectCenter;
+	//public Point ObjectCenter;
 	final public Transformation CameraTransformation;
 	final public Transformation ProjectionTransformation;
 	final public Transformation DeviceTransformation;
@@ -56,8 +56,6 @@ public class View3D {
 		WindowBottom = windowBottom;
 		ViewWidth = viewWidth;
 		ViewHeight = viewHeight;
-		
-		ObjectCenter = new Point(0, 0, -9.5, 1);
 
 		Matrix translationToWorldOrigin = Matrix.translate(
 				-Position.X,
