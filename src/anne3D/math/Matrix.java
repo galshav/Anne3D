@@ -3,8 +3,6 @@ package anne3D.math;
 import java.lang.RuntimeException;
 import java.util.Arrays;
 
-import anne3D.utilities.Logger;
-
 public class Matrix {
 	
 	protected final int m_NumberOfRows;

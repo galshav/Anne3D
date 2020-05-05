@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import anne3D.math.Matrix;
-import anne3D.math.Point;
 import anne3D.math.Transformation;
 import anne3D.math.Vector3;
 import anne3D.utilities.File;
-import anne3D.utilities.Logger;
 
 /*
  * View data type class.
@@ -32,7 +30,6 @@ public class View3D {
 	final public double WindowBottom;
 	final public int ViewWidth;
 	final public int ViewHeight;
-	//public Point ObjectCenter;
 	final public Transformation CameraTransformation;
 	final public Transformation ProjectionTransformation;
 	final public Transformation DeviceTransformation;

@@ -1,17 +1,14 @@
 package anne3D;
 import java.awt.Color;
+import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.lang.Exception;
 import anne3D.canvas.EngineCanvas;
-import anne3D.configurations.Scene;
 import anne3D.configurations.Scene3D;
-import anne3D.configurations.View;
 import anne3D.configurations.View3D;
-import anne3D.math.Vector2;
-import anne3D.math.Vector3;
 import anne3D.utilities.Logger;
 
 final public class Main {
@@ -41,11 +38,34 @@ final public class Main {
 	private static void launch(final String[] args) throws IOException {
 		
 		Frame frame = new Frame(g_TITLE);
-		Scene3D scene3D = Scene3D.loadSceneFromFile("c:\\users\\galsh\\desktop\\example3d.scn");
-		View3D view3D = View3D.loadViewFromFile("c:\\users\\galsh\\desktop\\example3d.viw");
+		
+		FileDialog fd = new FileDialog(frame, "Choose a scene file", FileDialog.LOAD);
+		fd.setDirectory("C:\\");
+		fd.setFile("*.scn");
+		fd.setVisible(true);
+		String sceneFilePath = String.format("%s%s", fd.getDirectory(), fd.getFile());
+		if (sceneFilePath == null)
+		  System.out.println("You cancelled the choice");
+		else
+		  System.out.println("You chose " + sceneFilePath);
+		
+		new FileDialog(frame, "Choose a view file", FileDialog.LOAD);
+		fd.setDirectory("C:\\");
+		fd.setFile("*.viw");
+		fd.setVisible(true);
+		String viewFilePath = String.format("%s%s", fd.getDirectory(), fd.getFile());
+
+		if (viewFilePath == null)
+		  System.out.println("You cancelled the choice");
+		else
+		  System.out.println("You chose " + viewFilePath);
+		
+		
+		Scene3D scene3D = Scene3D.loadSceneFromFile(sceneFilePath);
+		View3D view3D = View3D.loadViewFromFile(viewFilePath);
 		EngineCanvas engineCanvas = new EngineCanvas(
-				scene3D,//Scene.loadSceneFromFile("c:\\users\\galsh\\desktop\\example.scn"),
-				view3D,//View.loadViewFromFile("c:\\users\\galsh\\desktop\\example.viw"),
+				scene3D,
+				view3D,
 				Color.BLACK);
 		frame.add(engineCanvas);
 		WindowAdapter windowAdapter = new WindowAdapter() {

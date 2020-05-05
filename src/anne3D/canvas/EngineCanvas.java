@@ -1,7 +1,5 @@
 package anne3D.canvas;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -221,13 +219,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				mouseEvent.getX(),
 				mouseEvent.getY()));
 		m_AccumulatedTransformation = m_AccumulatedTransformation.compose(m_CurrentTransformation);
-		final Transformation modelTransformation = 
-				m_CurrentTransformation.compose(
-				m_AccumulatedTransformation.compose(
-				m_View.CameraTransformation));
-		//m_View.ObjectCenter = modelTransformation.applyTransformation(new Point(0, 0, -9.5, 1));
 		m_CurrentTransformation = new Transformation(Matrix.identity(4));
-		//Logger.Debug(String.format("Center:(%f, %f, %f)", m_View.ObjectCenter.X(), m_View.ObjectCenter.Y(), m_View.ObjectCenter.Z()));
 	}
 
 	private void setTranslateTransform(final MouseEvent mouseEvent) {
