@@ -37,4 +37,20 @@ public class Vector3 extends ColumnVector {
 				result.getValue(1, 0),
 				result.getValue(2, 0));
 	}
+	
+	public Vector3 cross(final Vector3 other) {
+		return new Vector3(
+				this.Y * other.Z - this.Z * other.Y,
+				this.Z * other.X - this.X * other.Z,
+				this.X * other.Y - this.Y * other.X);
+	}
+	
+	@Override
+	public Vector3 divide(final double factor) {
+		Matrix result = super.divide(factor);
+		return new Vector3(
+				result.getValue(0, 0),
+				result.getValue(1, 0),
+				result.getValue(2, 0));
+	}
 }

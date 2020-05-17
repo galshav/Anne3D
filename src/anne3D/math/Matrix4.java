@@ -12,9 +12,9 @@ public class Matrix4 extends Matrix {
 			throw new RuntimeException("Matrix4D must accept 16 double's");
 		}
 		
-		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 3; ++j) {
-				m_Data[i][j] = data[i * 3 + j];
+		for (int i = 0; i < 4; ++i) {
+			for (int j = 0; j < 4; ++j) {
+				m_Data[i][j] = data[i * 4 + j];
 			}
 		}
 	}

@@ -87,6 +87,17 @@ public class Matrix {
 		return result;
 	}
 	
+	public Matrix divide(final double factor) {
+		final Matrix result = new Matrix(m_NumberOfRows, m_NumberOfColumns);
+		for (int i = 0; i < result.m_NumberOfRows; ++i) {
+			for (int j = 0; j < result.m_NumberOfColumns; ++j) {
+				result.m_Data[i][j] = this.m_Data[i][j] / factor;
+			}
+		}
+		
+		return result;
+	}
+	
 	public Matrix times(final Matrix other) {
 		if (m_NumberOfColumns != other.m_NumberOfRows) {
 			throw new RuntimeException("Can not multiply matrices with illegal dimensions.");
@@ -108,12 +119,14 @@ public class Matrix {
 		Matrix newPointAsMatrix = this.times(new Matrix(new double[][] {
 			{point.X()},
 			{point.Y()},
-			{point.Z()}}));
+			{point.Z()},
+			{point.W()}}));
 		
 		return new Point(
 				newPointAsMatrix.getValue(0, 0),
 				newPointAsMatrix.getValue(1, 0),
-				newPointAsMatrix.getValue(2, 0));
+				newPointAsMatrix.getValue(2, 0),
+				newPointAsMatrix.getValue(3, 0));
 	}
 	
 	public Matrix transpose() {
@@ -171,5 +184,16 @@ public class Matrix {
 			});
 		
 		return rotationMatrix;
+	}
+	
+	public static Matrix changeCoordinates(final ColumnVector ...coordinates) {
+		final Matrix result = Matrix.identity(coordinates.length + 1); 
+		for (int i = 0; i < coordinates.length; ++i) {
+			for (int j = 0; j < coordinates.length; ++j) {
+				result.m_Data[i][j] = coordinates[i].getValue(j, 0);
+			}
+		}
+		
+		return result;
 	}
 }

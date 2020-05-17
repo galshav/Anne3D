@@ -6,10 +6,13 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Objects;
 import anne3D.Main;
-import anne3D.configurations.Scene;
+import anne3D.configurations.Scene3D;
 import anne3D.configurations.View;
+import anne3D.configurations.View3D;
 import anne3D.math.Edge;
 import anne3D.math.Matrix;
 import anne3D.math.Point;
@@ -17,7 +20,7 @@ import anne3D.math.Transformation;
 import anne3D.math.Vector2;
 import anne3D.utilities.Logger;
 
-final public class EngineCanvas extends Canvas implements MouseListener, MouseMotionListener {
+final public class EngineCanvas extends Canvas implements MouseListener, MouseMotionListener, KeyListener {
 	private static enum e_STATE {
 		TRANSLATE,
 		SCALE,
@@ -25,29 +28,31 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 		NONE
 	}
 	
+	private char m_RotationAxis = 'z';
 	private static final long serialVersionUID = 1L;
 	private Point m_StartPoint;
-	private View m_View;
-	private Scene m_Scene;
+	private View3D m_View;
+	private Scene3D m_Scene;
 	private Transformation m_CurrentTransformation;
 	private Transformation m_AccumulatedTransformation;
 	private e_STATE m_CurrentTransformationState;
 	
-	public EngineCanvas(final Scene scene, final View view) {
+	public EngineCanvas(final Scene3D scene, final View3D view) {
 		Objects.requireNonNull(scene, "scene argument can not be null.");
 		Objects.requireNonNull(view, "view argument can not be null.");
-		m_CurrentTransformation = new Transformation(Matrix.identity(3));
-		m_AccumulatedTransformation = new Transformation(Matrix.identity(3));
+		m_CurrentTransformation = new Transformation(Matrix.identity(4));
+		m_AccumulatedTransformation = new Transformation(Matrix.identity(4));
 		m_View = view;
 		m_Scene = scene;
 		m_CurrentTransformationState = e_STATE.NONE;
 		setSize(view.ViewWidth + View.g_WINDOW_MARGIN,
-				view.ViewWidth + View.g_WINDOW_MARGIN);
+				view.ViewHeight + View.g_WINDOW_MARGIN);
 		addMouseListener(this);
+		addKeyListener(this);
 		addMouseMotionListener(this);
 	}
 	
-	public EngineCanvas(final Scene scene, final View view, final Color canvasColor) {
+	public EngineCanvas(final Scene3D scene, final View3D view, final Color canvasColor) {
 		this(scene, view);
 		setBackground(canvasColor);
 	}
@@ -95,16 +100,25 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 	
 	@Override
 	public void paint (final Graphics graphics) {
+		graphics.setColor(Color.GREEN);
 		paintClipBorder(graphics);
 		paintGrid(graphics);
-		graphics.setColor(Color.GREEN);
-		graphics.drawString("Press 'C' for clliping.", 5, 15);
-		final Transformation totalTransformation = 
+		graphics.setColor(Color.magenta);
+		//graphics.drawString("Press 'C' for clliping.", 5, 15);
+		
+		final Transformation modelTransformation = 
 				m_CurrentTransformation.compose(
 				m_AccumulatedTransformation.compose(
-				m_View.ViewTransformation));
+				m_View.CameraTransformation));
 		
-		//m_AccumulatedTransformation = m_AccumulatedTransformation.compose(m_CurrentTransformation);
+		final Transformation viewTransformation = 
+				m_View.DeviceTransformation.compose(
+				m_View.ProjectionTransformation);
+		
+		final Transformation totalTransformation = 
+				viewTransformation.compose(
+				modelTransformation);
+		
 		for (final Edge origEdge : m_Scene.Edges) {
 			Point p1 = totalTransformation.applyTransformation(origEdge.GetFirstPoint());
 			Point p2 = totalTransformation.applyTransformation(origEdge.GetSecondPoint());
@@ -113,7 +127,7 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 					(int)p1.Y(),
 					(int)p2.X(),
 					(int)p2.Y());
-		}	
+		}
 	}
 	
 	private void setTransformationTypeByPressedPointCoordinates(final Point point) {
@@ -205,48 +219,72 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				mouseEvent.getX(),
 				mouseEvent.getY()));
 		m_AccumulatedTransformation = m_AccumulatedTransformation.compose(m_CurrentTransformation);
-		m_CurrentTransformation = new Transformation(Matrix.identity(3));
+		m_CurrentTransformation = new Transformation(Matrix.identity(4));
 	}
 
 	private void setTranslateTransform(final MouseEvent mouseEvent) {
+		final double smoothFactor = 400;
 		m_CurrentTransformation = new Transformation(
 				Matrix.translate(
-						mouseEvent.getX() - m_StartPoint.X(),
-						mouseEvent.getY() - m_StartPoint.Y()));
+						(mouseEvent.getX() - m_StartPoint.X()) / smoothFactor,
+						(mouseEvent.getY() - m_StartPoint.Y()) / smoothFactor,
+						0));
 	}
 	
 	private void setScaleTransform(final MouseEvent mouseEvent) {
 		final double centerX = m_View.ViewWidth / 2 + View.g_WINDOW_MARGIN;
 		final double centerY = m_View.ViewHeight / 2 + View.g_WINDOW_MARGIN;
-		//final Vector2 centerVector = new Vector2(centerX, centerY);
-		final Vector2 destinationVector = new Vector2(mouseEvent.getX() - centerX, (mouseEvent.getY() - centerY) * -1);
-		final Vector2 sourceVector = new Vector2(m_StartPoint.X() - centerX, (m_StartPoint.Y() - centerY) * -1);
-		//final double scaleFactor = 
-		//		destinationVector.minus(centerVector).size() / 
-		//		sourceVector	 .minus(centerVector).size();
+		final Vector2 destinationVector = new Vector2(
+				mouseEvent.getX() - centerX,
+				centerY - mouseEvent.getY());
+		final Vector2 sourceVector = new Vector2(
+				m_StartPoint.X() - centerX,
+				centerY - m_StartPoint.Y());
 		final double scaleFactor =
 				destinationVector.size() / sourceVector.size();
+		Logger.Debug(String.format("%f", scaleFactor));
+		final double deltaZ = this.m_View.Position.Z - this.m_View.LookAt.Z;
 		m_CurrentTransformation = new Transformation(
-			 Matrix.translate(centerX, centerY).times
-			(Matrix.scale(scaleFactor, scaleFactor).times
-			(Matrix.translate(-centerX, -centerY))));
+			 Matrix.translate(0, 0, deltaZ).times
+			(Matrix.scale(scaleFactor, scaleFactor, scaleFactor).times
+			(Matrix.translate(-0, -0, -deltaZ))));
 	}
 	
 	private void setRotateTransform(final MouseEvent mouseEvent) {
 		final double centerX = m_View.ViewWidth / 2 + View.g_WINDOW_MARGIN;
 		final double centerY = m_View.ViewHeight / 2 + View.g_WINDOW_MARGIN;
-		//final Vector2 centerVector = new Vector2(0, 0);
-		final Vector2 destinationVector = new Vector2(mouseEvent.getX() - centerX, (mouseEvent.getY() - centerY) * -1);
-		final Vector2 sourceVector = new Vector2(m_StartPoint.X() - centerX, (m_StartPoint.Y() - centerY) * -1);
-		//final double angle = 
-		//		destinationVector.minus(centerVector).angle() - 
-		//		sourceVector	 .minus(centerVector).angle();
+		final Vector2 destinationVector = new Vector2(
+				mouseEvent.getX() - centerX,
+				centerY - mouseEvent.getY());
+		final Vector2 sourceVector = new Vector2(
+				m_StartPoint.X() - centerX,
+				centerY - m_StartPoint.Y());
+		Logger.Debug(String.format(
+				"Dest: %f[deg], Source: %f[deg], delta:%f[deg]",
+				destinationVector.angle(),
+				sourceVector.angle(),
+				destinationVector.angle() - sourceVector.angle()));
 		final double angle = 
-				destinationVector.angle() - sourceVector.angle();
-		m_CurrentTransformation = new Transformation( 
-				Transformation.translate(centerX, centerY).times
-				(Transformation.rotate2D(angle).times
-				(Transformation.translate(-centerX, -centerY))));
+				destinationVector.angle() - 
+				sourceVector.angle();
+
+		Matrix rotationMatrix = null;
+		if (m_RotationAxis == 'x') {
+			rotationMatrix = Transformation.rotate3DByX(angle);
+		}
+		else if (m_RotationAxis == 'y') {
+			rotationMatrix = Transformation.rotate3DByY(angle);
+		}
+		
+		else {
+			rotationMatrix = Transformation.rotate3DByZ(angle);
+		}
+		
+		final double deltaZ = this.m_View.Position.Z - this.m_View.LookAt.Z;
+		m_CurrentTransformation = new Transformation(
+				Matrix.translate(0, 0, deltaZ).times(
+				rotationMatrix.times(
+				Matrix.translate(-0, -0, -deltaZ))));
 	}
 	
 	@Override
@@ -281,5 +319,22 @@ final public class EngineCanvas extends Canvas implements MouseListener, MouseMo
 				"mouse moved",
 				mouseEvent.getX(),
 				mouseEvent.getY()));
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		return;
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		Logger.Debug(String.format("key pressed: %s", e.getKeyChar()));
+		m_RotationAxis = e.getKeyChar();
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		return;
 	}
 }
