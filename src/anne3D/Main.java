@@ -23,6 +23,7 @@ final public class Main {
 	// TODO: get scene and view file from main args.
 	public static void main(final String[] args) throws Exception {
 		try {
+			Logger.Info("jogl");
 			Logger.Info("Starting engine.");
 			launch(args);
 		}
