@@ -6,10 +6,16 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.lang.Exception;
+
+import anne3D.Demo.Demo;
 import anne3D.canvas.EngineCanvas;
 import anne3D.configurations.Scene3D;
 import anne3D.configurations.View3D;
 import anne3D.utilities.Logger;
+import com.jogamp.newt.Window;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.util.Animator;
 
 final public class Main {
 	
@@ -23,9 +29,9 @@ final public class Main {
 	// TODO: get scene and view file from main args.
 	public static void main(final String[] args) throws Exception {
 		try {
-			Logger.Info("jogl");
 			Logger.Info("Starting engine.");
-			launch(args);
+			//launch(args);
+			launch_jogl(args);
 		}
 		
 		catch (final Exception error) {
@@ -34,6 +40,31 @@ final public class Main {
 			// Can not continue execution, terminate program.
 			System.exit(g_EXIT_ERROR);
 		}
+	}
+	
+	public static void launch_jogl(final String[] args) {
+		Frame frame = new Frame(g_TITLE);
+		frame.setSize(800, 600);
+		final Animator animator = new Animator();
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+			public void windowClosing(java.awt.event.WindowEvent e) {
+				new Thread(new Runnable() {
+					public void run() {
+						animator.stop();
+						System.exit(0);
+					}
+				}).start();
+			}
+		});
+		
+		GLCanvas canvas = new GLCanvas();
+		animator.add(canvas);
+		final Demo demo = new Demo();
+		canvas.addGLEventListener(demo);
+		frame.add(canvas, java.awt.BorderLayout.CENTER);
+		frame.validate();
+		frame.setVisible(true);
+		animator.start();
 	}
 	
 	private static void launch(final String[] args) throws IOException {

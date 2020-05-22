@@ -21,6 +21,11 @@ public class Vector3 extends ColumnVector {
 	}
 	
 	@Override
+	public String toString() {
+		return String.format("x=%f, y=%f, z=%f", X, Y, Z);
+	}
+	
+	@Override
 	public Vector3 minus(final Matrix other) {
 		Matrix result = super.minus(other);
 		return new Vector3(
