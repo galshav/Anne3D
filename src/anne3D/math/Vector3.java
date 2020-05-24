@@ -2,9 +2,9 @@ package anne3D.math;
 
 public class Vector3 extends ColumnVector {
 	
-	final public double X;
-	final public double Y;
-	final public double Z;
+	public double X;
+	public double Y;
+	public double Z;
 	
 	public Vector3() {
 		super(3);

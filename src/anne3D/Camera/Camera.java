@@ -1,5 +1,6 @@
 package anne3D.Camera;
 
+import anne3D.math.Matrix;
 import anne3D.math.Vector3;
 import anne3D.math.Vector4;
 
@@ -16,6 +17,12 @@ final public class Camera {
 	public Vector3 Y;
 	public Vector3 Z;
 	
+	public enum AXIS {
+		X,
+		Y,
+		Z,
+	}
+	
 	private Camera() {
 		Position = new Vector4(0, 0, 0, 1);
 		X = new Vector3(1, 0 ,0);
@@ -29,5 +36,27 @@ final public class Camera {
 		}
 		
 		return m_instance;
+	}
+	
+	public void rotate() {
+		
+	}
+	
+	public void move(final AXIS axis, final double moveFactor) {
+		if (axis == AXIS.X) { 
+			Position.X = Position.X + moveFactor;
+		}
+		
+		else if (axis == AXIS.Y) {
+			Position.Y = Position.Y + moveFactor;
+		}
+		
+		else if (axis == AXIS.Z) {
+			Position.Z = Position.Z + moveFactor;
+		}
+		
+		else {
+			throw new RuntimeException("Incorrect camera dimension.");
+		}
 	}
 }

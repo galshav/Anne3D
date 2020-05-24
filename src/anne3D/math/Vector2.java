@@ -2,8 +2,8 @@ package anne3D.math;
 
 public class Vector2 extends ColumnVector {
 
-	final public double X;
-	final public double Y;
+	public double X;
+	public double Y;
 	
 	public Vector2() {
 		super(2);

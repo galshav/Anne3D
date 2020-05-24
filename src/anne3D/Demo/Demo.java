@@ -3,6 +3,7 @@ package anne3D.Demo;
 import com.jogamp.newt.Window;
 import com.jogamp.newt.event.KeyAdapter;
 import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.awt.AWTKeyAdapter;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -11,9 +12,10 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import anne3D.Camera.Camera;
+import anne3D.math.Matrix;
 import anne3D.utilities.Logger;
 
-public class Demo extends KeyAdapter implements GLEventListener{
+public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	
 	static private GLU g_glu;
 	static private GLUT g_glut;
@@ -22,7 +24,6 @@ public class Demo extends KeyAdapter implements GLEventListener{
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		Camera camera = Camera.getInstance();
-		Logger.Info(camera.X.toString());
 		GL2 gl = drawable.getGL().getGL2();
 		g_glu = new GLU();
 		g_glut = new GLUT();
@@ -58,14 +59,33 @@ public class Demo extends KeyAdapter implements GLEventListener{
 		gl.glClear(GL2.GL_DEPTH_BUFFER_BIT);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
-		g_glu.gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
+		Camera camera = Camera.getInstance();
+		//camera.Position = camera.Position.plus(new Matrix(new double[][] {{0.0},{0.0},{-0.02},{0}}));
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		g_glu.gluLookAt(
+				// Position of camera.
+				camera.Position.X,
+				camera.Position.Y,
+				camera.Position.Z,
+				// Where to look at.
+				camera.Position.X,
+				camera.Position.Y,
+				camera.Position.Z - 0.1,
+				// Up vector.
+				0, 1, 0);
 		
 		gl.glBegin(GL2.GL_TRIANGLES);
 		gl.glColor3f(1.0f, 0.0f, 0.0f);
+		
 		gl.glVertex3f(1.0f, 0.0f, -5.0f);
-		gl.glColor3f(0.0f, 1.0f, 1.0f);
+		//gl.glColor3f(0.0f, 1.0f, 1.0f);
 		gl.glVertex3f(-1.0f, 0.0f, -5.0f);
-		gl.glColor3f(1.0f, 1.0f, 1.0f);
+		//gl.glColor3f(1.0f, 1.0f, 1.0f);
 		gl.glVertex3f(0.0f, 1.5f, -5.0f);
 		gl.glEnd();
 		
@@ -73,7 +93,6 @@ public class Demo extends KeyAdapter implements GLEventListener{
 	}
 	
 	public void displayOrig(GLAutoDrawable drawable) {
-		// Get the GL corresponding to the drawable we are animating
 		final GL2 gl = drawable.getGL().getGL2();
 		
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -149,9 +168,40 @@ public class Demo extends KeyAdapter implements GLEventListener{
 	}
 	
 	public void keyPressed(KeyEvent e) {
-		int kc = e.getKeyCode();
-		if (KeyEvent.VK_ESCAPE == kc) {
+		Logger.Debug(String.format("key pressed: %s", e.getKeyChar()));
+		Camera camera = Camera.getInstance();
+		int keyCode = e.getKeyCode();
+		switch (keyCode) {
+		case KeyEvent.VK_ESCAPE:
 			System.exit(0);
+			break;
+			
+		case KeyEvent.VK_W:
+			camera.move(Camera.AXIS.Z, -0.05);
+			break;
+			
+		case KeyEvent.VK_S:
+			camera.move(Camera.AXIS.Z, 0.05);
+			break;
+			
+		case KeyEvent.VK_A:
+			camera.move(Camera.AXIS.X, -0.05);
+			break;
+			
+		case KeyEvent.VK_D:
+			camera.move(Camera.AXIS.X, 0.05);
+			break;
+			
+		case KeyEvent.VK_E:
+			camera.move(Camera.AXIS.Y, -0.05);
+			break;
+			
+		case KeyEvent.VK_Q:
+			camera.move(Camera.AXIS.Y, 0.05);
+			break;
+			
+		default:
+			break;
 		}
 	}
 }
