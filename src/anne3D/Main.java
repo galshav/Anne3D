@@ -12,8 +12,6 @@ import anne3D.canvas.EngineCanvas;
 import anne3D.configurations.Scene3D;
 import anne3D.configurations.View3D;
 import anne3D.utilities.Logger;
-import com.jogamp.newt.Window;
-import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
 

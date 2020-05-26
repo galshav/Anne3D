@@ -1,8 +1,6 @@
 package anne3D.Camera;
 
-import anne3D.math.Matrix;
 import anne3D.math.Vector3;
-import anne3D.math.Vector4;
 import anne3D.utilities.Logger;
 
 /*
@@ -19,27 +17,17 @@ final public class Camera {
 		W,
 	}
 	
-	// Camera position.
-	public Vector4 Position;
-	// Camera coordinate system.
+	public Vector3 Position;
 	public Vector3 U; 
 	public Vector3 V; 
 	public Vector3 W; 
-	// World coordinate system.
-	final private Vector3 X;
-	final private Vector3 Y;
-	final private Vector3 Z;
-	
-	
+
 	private double m_RotationAngleRelativeToU = 0;
 	private double m_RotationAngleRelativeToV = 0;
 	private double m_RotationAngleRelativeToW = 0;
 	
 	private Camera() {
-		Position = new Vector4(0, 0, 0, 1);
-		X = new Vector3(1, 0, 0);
-		Y = new Vector3(0, 1, 0);
-		Z = new Vector3(0, 0, 1);
+		Position = new Vector3(0, 0, 3);
 		U = new Vector3(1, 0 ,0);
 		V = new Vector3(0, 1, 0);
 		W = new Vector3(0, 0, 1);
@@ -54,6 +42,10 @@ final public class Camera {
 	}
 	
 	public void rotate(final AXIS axis, final double angleInDeg) {
+		if (0 == angleInDeg) {
+			return;
+		}
+		
 		if (axis == AXIS.U) {
 			m_RotationAngleRelativeToU += angleInDeg;
 			m_RotationAngleRelativeToU = m_RotationAngleRelativeToU % 360;
@@ -62,7 +54,6 @@ final public class Camera {
 			V = V.divide(V.size());
 			W = V.multiplyByScalar(-Math.sin(Math.toRadians(angleInDeg))).plus(W.multiplyByScalar(Math.cos(Math.toRadians(angleInDeg))));
 			W = W.divide(W.size());
-			
 		}
 		
 		else if (axis == AXIS.V) {
@@ -84,13 +75,13 @@ final public class Camera {
 			V = U.multiplyByScalar(-Math.sin(Math.toRadians(angleInDeg))).plus(V.multiplyByScalar(Math.cos(Math.toRadians(angleInDeg))));
 			V = V.divide(V.size());
 		}
-		
-		Logger.Debug(U.toString());
-		Logger.Debug(V.toString());
-		Logger.Debug(W.toString());
 	}
 	
 	public void move(final AXIS axis, final double moveFactor) {
+		if (0 == moveFactor) {
+			return;
+		}
+		
 		if (AXIS.U == axis) { 
 			Position.X = Position.X + (moveFactor * U.X); 
 			Position.Y = Position.Y + (moveFactor * U.Y);
@@ -112,5 +103,7 @@ final public class Camera {
 		else {
 			throw new RuntimeException("Incorrect camera dimension.");
 		}
+		
+		Logger.Debug(String.format("Camera position: (%f, %f, %f)", Position.X, Position.Y, Position.Z));
 	}
 }
