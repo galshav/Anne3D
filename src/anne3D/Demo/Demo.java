@@ -18,7 +18,9 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	
 	static private GLU g_glu;
 	static private GLUT g_glut;
-	float rotateT = 0.0f;
+	
+	private final double m_MovementFactor = 0.02;
+	private final double m_RotationFactor = 0.5;
 	
 	@Override
 	public void init(GLAutoDrawable drawable) {
@@ -41,13 +43,11 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	        java.awt.Component comp = (java.awt.Component) drawable;
 	        new AWTKeyAdapter(this, drawable).addTo(comp);
 	    }
-		
 	}
 
 	@Override
 	public void dispose(GLAutoDrawable drawable) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -73,15 +73,14 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		
 		gl.glBegin(GL2.GL_TRIANGLES);
 		gl.glColor3f(1.0f, 0.0f, 0.0f);
-		
 		gl.glVertex3f(1.0f, 0.0f, -5.0f);
 		gl.glVertex3f(-1.0f, 0.0f, -5.0f);
 		gl.glVertex3f(0.0f, 1.5f, -5.0f);
 		gl.glEnd();
-		
 		gl.glFlush();
 	}
 	
+	/*
 	public void displayOrig(GLAutoDrawable drawable) {
 		final GL2 gl = drawable.getGL().getGL2();
 		
@@ -136,6 +135,7 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		rotateT += 0.05f;
 		
 	}
+	*/
 
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -167,39 +167,51 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 			break;
 			
 		case KeyEvent.VK_W:
-			camera.move(Camera.AXIS.W, -0.05);
+			camera.move(Camera.AXIS.W, -m_MovementFactor);
 			break;
 			
 		case KeyEvent.VK_S:
-			camera.move(Camera.AXIS.W, 0.05);
+			camera.move(Camera.AXIS.W, m_MovementFactor);
 			break;
 			
 		case KeyEvent.VK_A:
-			camera.move(Camera.AXIS.U, -0.05);
+			camera.move(Camera.AXIS.U, -m_MovementFactor);
 			break;
 			
 		case KeyEvent.VK_D:
-			camera.move(Camera.AXIS.U, 0.05);
+			camera.move(Camera.AXIS.U, m_MovementFactor);
 			break;
 			
 		case KeyEvent.VK_E:
-			camera.move(Camera.AXIS.V, -0.05);
+			camera.move(Camera.AXIS.V, -m_MovementFactor);
 			break;
 			
 		case KeyEvent.VK_Q:
-			camera.move(Camera.AXIS.V, 0.05);
+			camera.move(Camera.AXIS.V, m_MovementFactor);
 			break;
 			
 		case KeyEvent.VK_I:
-			camera.rotate(Camera.AXIS.U, 2);
+			camera.rotate(Camera.AXIS.U, m_RotationFactor);
 			break;
 			
 		case KeyEvent.VK_K:
-			camera.rotate(Camera.AXIS.V, 2);
+			camera.rotate(Camera.AXIS.U, -m_RotationFactor);
 			break;
 			
 		case KeyEvent.VK_L:
-			camera.rotate(Camera.AXIS.W, 2);
+			camera.rotate(Camera.AXIS.V, -m_RotationFactor);
+			break;
+			
+		case KeyEvent.VK_J:
+			camera.rotate(Camera.AXIS.V, m_RotationFactor);
+			break;
+			
+		case KeyEvent.VK_O:
+			camera.rotate(Camera.AXIS.W, m_RotationFactor);
+			break;
+			
+		case KeyEvent.VK_U:
+			camera.rotate(Camera.AXIS.W, -m_RotationFactor);
 			break;
 			
 		default:
