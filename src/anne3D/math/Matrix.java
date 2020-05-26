@@ -60,7 +60,6 @@ public class Matrix {
 			throw new RuntimeException("Can not add matrix with different dimensions.");
 		}
 		
-		//T result = this.createSpecificMatrixType(other);
 		Matrix result = new Matrix(m_NumberOfRows, m_NumberOfColumns);
 		for (int i = 0; i < m_NumberOfRows; ++i) {
 			for (int j = 0; j < m_NumberOfColumns; ++j) {
@@ -92,6 +91,17 @@ public class Matrix {
 		for (int i = 0; i < result.m_NumberOfRows; ++i) {
 			for (int j = 0; j < result.m_NumberOfColumns; ++j) {
 				result.m_Data[i][j] = this.m_Data[i][j] / factor;
+			}
+		}
+		
+		return result;
+	}
+	
+	public Matrix multiplyByScalar(final double factor) {
+		final Matrix result = new Matrix(m_NumberOfRows, m_NumberOfColumns);
+		for (int i = 0; i < result.m_NumberOfRows; ++i) {
+			for (int j = 0; j < result.m_NumberOfColumns; ++j) {
+				result.m_Data[i][j] = this.m_Data[i][j] * factor;
 			}
 		}
 		

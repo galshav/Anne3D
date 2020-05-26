@@ -51,6 +51,15 @@ public class Vector3 extends ColumnVector {
 	}
 	
 	@Override
+	public Vector3 multiplyByScalar(final double factor) {
+		Matrix result = super.multiplyByScalar(factor);
+		return new Vector3(
+				result.getValue(0, 0),
+				result.getValue(1, 0),
+				result.getValue(2, 0));
+	}
+	
+	@Override
 	public Vector3 divide(final double factor) {
 		Matrix result = super.divide(factor);
 		return new Vector3(

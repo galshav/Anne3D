@@ -12,7 +12,6 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import anne3D.Camera.Camera;
-import anne3D.math.Matrix;
 import anne3D.utilities.Logger;
 
 public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
@@ -60,32 +59,23 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		Camera camera = Camera.getInstance();
-		//camera.Position = camera.Position.plus(new Matrix(new double[][] {{0.0},{0.0},{-0.02},{0}}));
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		g_glu.gluLookAt(
 				// Position of camera.
 				camera.Position.X,
 				camera.Position.Y,
 				camera.Position.Z,
 				// Where to look at.
-				camera.Position.X,
-				camera.Position.Y,
-				camera.Position.Z - 0.1,
+				camera.Position.X - camera.W.X,
+				camera.Position.Y - camera.W.Y,
+				camera.Position.Z - camera.W.Z,
 				// Up vector.
-				0, 1, 0);
+				camera.V.X, camera.V.Y, camera.V.Z);
 		
 		gl.glBegin(GL2.GL_TRIANGLES);
 		gl.glColor3f(1.0f, 0.0f, 0.0f);
 		
 		gl.glVertex3f(1.0f, 0.0f, -5.0f);
-		//gl.glColor3f(0.0f, 1.0f, 1.0f);
 		gl.glVertex3f(-1.0f, 0.0f, -5.0f);
-		//gl.glColor3f(1.0f, 1.0f, 1.0f);
 		gl.glVertex3f(0.0f, 1.5f, -5.0f);
 		gl.glEnd();
 		
@@ -177,27 +167,39 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 			break;
 			
 		case KeyEvent.VK_W:
-			camera.move(Camera.AXIS.Z, -0.05);
+			camera.move(Camera.AXIS.W, -0.05);
 			break;
 			
 		case KeyEvent.VK_S:
-			camera.move(Camera.AXIS.Z, 0.05);
+			camera.move(Camera.AXIS.W, 0.05);
 			break;
 			
 		case KeyEvent.VK_A:
-			camera.move(Camera.AXIS.X, -0.05);
+			camera.move(Camera.AXIS.U, -0.05);
 			break;
 			
 		case KeyEvent.VK_D:
-			camera.move(Camera.AXIS.X, 0.05);
+			camera.move(Camera.AXIS.U, 0.05);
 			break;
 			
 		case KeyEvent.VK_E:
-			camera.move(Camera.AXIS.Y, -0.05);
+			camera.move(Camera.AXIS.V, -0.05);
 			break;
 			
 		case KeyEvent.VK_Q:
-			camera.move(Camera.AXIS.Y, 0.05);
+			camera.move(Camera.AXIS.V, 0.05);
+			break;
+			
+		case KeyEvent.VK_I:
+			camera.rotate(Camera.AXIS.U, 2);
+			break;
+			
+		case KeyEvent.VK_K:
+			camera.rotate(Camera.AXIS.V, 2);
+			break;
+			
+		case KeyEvent.VK_L:
+			camera.rotate(Camera.AXIS.W, 2);
 			break;
 			
 		default:

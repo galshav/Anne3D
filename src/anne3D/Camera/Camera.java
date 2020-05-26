@@ -3,6 +3,7 @@ package anne3D.Camera;
 import anne3D.math.Matrix;
 import anne3D.math.Vector3;
 import anne3D.math.Vector4;
+import anne3D.utilities.Logger;
 
 /*
  * Singleton camera class.
@@ -12,22 +13,36 @@ import anne3D.math.Vector4;
 final public class Camera {
 	private static Camera m_instance = null;
 	
-	public Vector4 Position;
-	public Vector3 X;
-	public Vector3 Y;
-	public Vector3 Z;
-	
 	public enum AXIS {
-		X,
-		Y,
-		Z,
+		U,
+		V,
+		W,
 	}
+	
+	// Camera position.
+	public Vector4 Position;
+	// Camera coordinate system.
+	public Vector3 U; 
+	public Vector3 V; 
+	public Vector3 W; 
+	// World coordinate system.
+	final private Vector3 X;
+	final private Vector3 Y;
+	final private Vector3 Z;
+	
+	
+	private double m_RotationAngleRelativeToU = 0;
+	private double m_RotationAngleRelativeToV = 0;
+	private double m_RotationAngleRelativeToW = 0;
 	
 	private Camera() {
 		Position = new Vector4(0, 0, 0, 1);
-		X = new Vector3(1, 0 ,0);
+		X = new Vector3(1, 0, 0);
 		Y = new Vector3(0, 1, 0);
 		Z = new Vector3(0, 0, 1);
+		U = new Vector3(1, 0 ,0);
+		V = new Vector3(0, 1, 0);
+		W = new Vector3(0, 0, 1);
 	}
 	
 	public static Camera getInstance() {
@@ -38,21 +53,60 @@ final public class Camera {
 		return m_instance;
 	}
 	
-	public void rotate() {
+	public void rotate(final AXIS axis, final double angleInDeg) {
+		if (axis == AXIS.U) {
+			m_RotationAngleRelativeToU += angleInDeg;
+			m_RotationAngleRelativeToU = m_RotationAngleRelativeToU % 360;
+			Logger.Debug(String.format("Angle relative to X:%f [deg]", m_RotationAngleRelativeToU));
+			V = V.multiplyByScalar(Math.cos(Math.toRadians(angleInDeg))).plus(W.multiplyByScalar(Math.sin(Math.toRadians(angleInDeg))));
+			V = V.divide(V.size());
+			W = V.multiplyByScalar(-Math.sin(Math.toRadians(angleInDeg))).plus(W.multiplyByScalar(Math.cos(Math.toRadians(angleInDeg))));
+			W = W.divide(W.size());
+			
+		}
 		
+		else if (axis == AXIS.V) {
+			m_RotationAngleRelativeToV += angleInDeg;
+			m_RotationAngleRelativeToV = m_RotationAngleRelativeToV % 360;
+			Logger.Debug(String.format("Angle relative to Y:%f [deg]", m_RotationAngleRelativeToV));
+			U = U.multiplyByScalar(Math.cos(Math.toRadians(angleInDeg))).minus(W.multiplyByScalar(Math.sin(Math.toRadians(angleInDeg))));
+			U = U.divide(U.size());
+			W = U.multiplyByScalar(Math.sin(Math.toRadians(angleInDeg))).plus(W.multiplyByScalar(Math.cos(Math.toRadians(angleInDeg))));
+			W = W.divide(W.size());
+		}
+		
+		else if (axis == AXIS.W) {
+			m_RotationAngleRelativeToW += angleInDeg;
+			m_RotationAngleRelativeToW = m_RotationAngleRelativeToW % 360;
+			Logger.Debug(String.format("Angle relative to Z:%f [deg]", m_RotationAngleRelativeToW));
+			U = U.multiplyByScalar(Math.cos(Math.toRadians(angleInDeg))).plus(V.multiplyByScalar(Math.sin(Math.toRadians(angleInDeg))));
+			U = U.divide(U.size());
+			V = U.multiplyByScalar(-Math.sin(Math.toRadians(angleInDeg))).plus(V.multiplyByScalar(Math.cos(Math.toRadians(angleInDeg))));
+			V = V.divide(V.size());
+		}
+		
+		Logger.Debug(U.toString());
+		Logger.Debug(V.toString());
+		Logger.Debug(W.toString());
 	}
 	
 	public void move(final AXIS axis, final double moveFactor) {
-		if (axis == AXIS.X) { 
-			Position.X = Position.X + moveFactor;
+		if (AXIS.U == axis) { 
+			Position.X = Position.X + (moveFactor * U.X); 
+			Position.Y = Position.Y + (moveFactor * U.Y);
+			Position.Z = Position.Z + (moveFactor * U.Z); 
 		}
 		
-		else if (axis == AXIS.Y) {
-			Position.Y = Position.Y + moveFactor;
+		else if (AXIS.V == axis) {
+			Position.X = Position.X + (moveFactor * V.X); 
+			Position.Y = Position.Y + (moveFactor * V.Y);
+			Position.Z = Position.Z + (moveFactor * V.Z); 
 		}
 		
-		else if (axis == AXIS.Z) {
-			Position.Z = Position.Z + moveFactor;
+		else if (AXIS.W == axis) {
+			Position.X = Position.X + (moveFactor * W.X); 
+			Position.Y = Position.Y + (moveFactor * W.Y);
+			Position.Z = Position.Z + (moveFactor * W.Z); 
 		}
 		
 		else {
