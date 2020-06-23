@@ -17,12 +17,12 @@ import com.jogamp.opengl.util.Animator;
 
 final public class Main {
 	
-	final public static boolean g_DEBUG 			= true;
-	final private static int 	g_EXIT_SUCCESS 		= 0;
-	final private static int 	g_EXIT_ERROR 		= -1;
-	final private static float  g_VERSION 			= 0.1f;
+	final public static boolean g_DEBUG             = true;
+	final private static int 	g_EXIT_SUCCESS      = 0;
+	final private static int 	g_EXIT_ERROR        = -1;
+	final private static float  g_VERSION           = 0.1f;
 	final private static String g_EXCEPTION_MESSAGE = "Unhandled exception.";
-	final private static String g_TITLE 			= String.format("Anne3D game engine v1.0", g_VERSION);
+	final private static String g_TITLE             = String.format("Anne3D game engine v1.0", g_VERSION);
 	
 	// TODO: get scene and view file from main args.
 	public static void main(final String[] args) throws Exception {
@@ -63,6 +63,7 @@ final public class Main {
 		frame.validate();
 		frame.setVisible(true);
 		animator.start();
+		canvas.requestFocus();
 	}
 	
 	private static void launch(final String[] args) throws IOException {

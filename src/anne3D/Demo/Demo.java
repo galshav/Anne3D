@@ -10,8 +10,10 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.util.gl2.GLUT;
 import anne3D.Camera.Camera;
+import anne3D.Models.Floor;
 import anne3D.utilities.Logger;
 
 public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
@@ -40,8 +42,8 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		// Initialize camera singleton.
-		Camera camera = Camera.getInstance();
-		GL2 gl = drawable.getGL().getGL2();
+		final Camera camera = Camera.getInstance();
+		final GL2 gl = drawable.getGL().getGL2();
 		g_glu = new GLU();
 		g_glut = new GLUT();
 		gl.glClearDepth(1.0f); // Depth Buffer Setup
@@ -53,10 +55,10 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 
 		// keyboard
 	    if (drawable instanceof Window) {
-	        Window window = (Window) drawable;
+	        final Window window = (Window) drawable;
 	        window.addKeyListener(this);
 	    } else if (GLProfile.isAWTAvailable() && drawable instanceof java.awt.Component) {
-	        java.awt.Component comp = (java.awt.Component) drawable;
+	        final java.awt.Component comp = (java.awt.Component) drawable;
 	        new AWTKeyAdapter(this, drawable).addTo(comp);
 	    }
 	}
@@ -67,7 +69,7 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	}
 
 	private void moveCamera() {
-		Camera camera = Camera.getInstance();
+		final Camera camera = Camera.getInstance();
 		camera.move(Camera.AXIS.U, m_MoveRightSpeed);
 		camera.move(Camera.AXIS.U, m_MoveLeftSpeed);
 		camera.move(Camera.AXIS.V, m_MoveUpSpeed);
@@ -77,7 +79,7 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	}
 	
 	private void rotateCamera() {
-		Camera camera = Camera.getInstance();
+		final Camera camera = Camera.getInstance();
 		camera.rotate(Camera.AXIS.U, m_LookUpSpeed);
 		camera.rotate(Camera.AXIS.U, m_LookDownSpeed);
 		camera.rotate(Camera.AXIS.V, m_LookRightSpeed);
@@ -89,7 +91,7 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		final GL2 gl = drawable.getGL().getGL2();
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 		gl.glClear(GL2.GL_DEPTH_BUFFER_BIT);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
@@ -97,6 +99,7 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		Camera camera = Camera.getInstance();
 		moveCamera();
 		rotateCamera();
+
 		g_glu.gluLookAt(
 			// Position of camera.
 			camera.Position.X,
@@ -110,6 +113,8 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 			camera.V.X, camera.V.Y, camera.V.Z);
 		
 		gl.glBegin(GL2.GL_TRIANGLES);
+		//GLUquadric quad = g_glu.gluNewQuadric(false, null);
+		//g_glu.gluSphere(quad, 0.5, 12, 12);
 		//gl.glColor3f(1.0f, 0.0f, 0.0f);
 		//gl.glVertex3f(1.0f, 0.0f, -5.0f);
 		//gl.glVertex3f(-1.0f, 0.0f, -5.0f);
@@ -149,6 +154,9 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		gl.glVertex3f(0.0f, -1.0f, -1.0f);
 		////////////////////
 		gl.glEnd();
+		
+		Floor.draw(drawable);
+		
 		gl.glFlush();
 	}
 	
