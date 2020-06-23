@@ -57,8 +57,7 @@ final public class Main {
 		
 		GLCanvas canvas = new GLCanvas();
 		animator.add(canvas);
-		final Demo demo = new Demo();
-		canvas.addGLEventListener(demo);
+		canvas.addGLEventListener(new Demo());
 		frame.add(canvas, java.awt.BorderLayout.CENTER);
 		frame.validate();
 		frame.setVisible(true);
@@ -66,6 +65,7 @@ final public class Main {
 		canvas.requestFocus();
 	}
 	
+	@SuppressWarnings("unused")
 	private static void launch(final String[] args) throws IOException {
 		
 		Frame frame = new Frame(g_TITLE);
