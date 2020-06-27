@@ -14,6 +14,7 @@ import anne3D.configurations.View3D;
 import anne3D.utilities.Logger;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
+import anne3D.Demo.WavefrontObjectLoader_DisplayList;
 
 final public class Main {
 	
@@ -27,6 +28,7 @@ final public class Main {
 	// TODO: get scene and view file from main args.
 	public static void main(final String[] args) throws Exception {
 		try {
+			WavefrontObjectLoader_DisplayList obj;
 			Logger.Info("Starting engine.");
 			//launch(args);
 			launch_jogl(args);

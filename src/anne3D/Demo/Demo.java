@@ -1,5 +1,8 @@
 package anne3D.Demo;
 
+import java.io.File;
+import java.io.IOException;
+
 import com.jogamp.newt.Window;
 import com.jogamp.newt.event.KeyAdapter;
 import com.jogamp.newt.event.KeyEvent;
@@ -10,16 +13,24 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
+
 import anne3D.Camera.Camera;
-import anne3D.Models.Floor;
+import anne3D.Models.Pyramid;
+import anne3D.Models.Room;
 import anne3D.utilities.Logger;
 
 public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	
 	static private GLU g_glu;
 	static private GLUT g_glut;
+	
+	private Texture m_BabyTexture;
+	private Texture m_AxeTexture;
+    private WavefrontObjectLoader_DisplayList m_Baby;
+    private WavefrontObjectLoader_DisplayList m_Axe;
 	
 	// Move camera properties.
 	private final double m_MovementFactor = 0.02;
@@ -46,10 +57,11 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		final GL2 gl = drawable.getGL().getGL2();
 		g_glu = new GLU();
 		g_glut = new GLUT();
+		gl.glShadeModel(GL2.GL_SMOOTH);
 		gl.glClearDepth(1.0f); // Depth Buffer Setup
 		gl.glEnable(GL2.GL_DEPTH_TEST); // Enables Depth Testing
 		gl.glDepthFunc(GL2.GL_LEQUAL); // The Type Of Depth Testing To Do
-
+		//gl.glEnable(GL2.GL_TEXTURE_2D);
 		// Really Nice Perspective Calculations
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
 
@@ -61,6 +73,23 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	        final java.awt.Component comp = (java.awt.Component) drawable;
 	        new AWTKeyAdapter(this, drawable).addTo(comp);
 	    }
+	    
+        try {
+    		String babyTextureFilePath="resources/baby/StandingBabyDiffuseMap.jpg";
+    		String axeTextureFilePath = "resources/axe/axe.jpg";
+    		m_BabyTexture = TextureIO.newTexture(new File(babyTextureFilePath), true);
+    		m_AxeTexture = TextureIO.newTexture(new File(axeTextureFilePath), true);
+    		
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
+        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
+        m_Baby = new WavefrontObjectLoader_DisplayList("resources\\baby\\baby.obj");
+        m_Axe = new WavefrontObjectLoader_DisplayList("resources\\axe\\axe_v1.obj");
+	    Logger.Debug("Done init.");
 	}
 
 	@Override
@@ -99,7 +128,26 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		Camera camera = Camera.getInstance();
 		moveCamera();
 		rotateCamera();
+		/*
+        //gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+        //gl.glLoadIdentity();  // Reset The View
+        gl.glTranslatef(0.0f, 0.0f, -2.0f);
 
+        gl.glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
+        gl.glRotatef(0.0f, 0.0f, 1.0f, 0.0f);
+        gl.glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
+        
+        gl.glTexParameteri ( GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT );
+        gl.glTexParameteri( GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT );
+        m_AxeTexture.bind(gl);
+        //m_BabyTexture.bind(gl);
+        gl.glScalef(100, 100, 100);
+        m_Axe.drawModel(gl);
+        
+        //m_Baby.drawModel(gl);
+         * */
+		
+		
 		g_glu.gluLookAt(
 			// Position of camera.
 			camera.Position.X,
@@ -112,111 +160,37 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 			// Up vector.
 			camera.V.X, camera.V.Y, camera.V.Z);
 		
-		gl.glBegin(GL2.GL_TRIANGLES);
-		//GLUquadric quad = g_glu.gluNewQuadric(false, null);
-		//g_glu.gluSphere(quad, 0.5, 12, 12);
-		//gl.glColor3f(1.0f, 0.0f, 0.0f);
-		//gl.glVertex3f(1.0f, 0.0f, -5.0f);
-		//gl.glVertex3f(-1.0f, 0.0f, -5.0f);
-		//gl.glVertex3f(0.0f, 1.5f, -5.0f);
-		////////////////////
+		// First pyramid.
+		gl.glPushMatrix();
+		Pyramid.draw(drawable);
+		gl.glPopMatrix();
 		
-		// Front
-		gl.glColor3f(0.0f, 1.0f, 1.0f);
-		gl.glVertex3f(0.0f, 1.0f, 0.0f);
-		gl.glColor3f(0.0f, 0.0f, 1.0f);
-		gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-		gl.glColor3f(0.0f, 0.0f, 0.0f);
-		gl.glVertex3f(1.0f, -1.0f, 1.0f);
-
-		// Right Side Facing Front
-		gl.glColor3f(0.0f, 1.0f, 1.0f);
-		gl.glVertex3f(0.0f, 1.0f, 0.0f);
-		gl.glColor3f(0.0f, 0.0f, 1.0f);
-		gl.glVertex3f(1.0f, -1.0f, 1.0f);
-		gl.glColor3f(0.0f, 0.0f, 0.0f);
-		gl.glVertex3f(0.0f, -1.0f, -1.0f);
-
-		// Left Side Facing Front
-		gl.glColor3f(0.0f, 1.0f, 1.0f);
-		gl.glVertex3f(0.0f, 1.0f, 0.0f);
-		gl.glColor3f(0.0f, 0.0f, 1.0f);
-		gl.glVertex3f(0.0f, -1.0f, -1.0f);
-		gl.glColor3f(0.0f, 0.0f, 0.0f);
-		gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-
-		// Bottom
-		gl.glColor3f(0.0f, 0.0f, 0.0f);
-		gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-		gl.glColor3f(0.1f, 0.1f, 0.1f);
-		gl.glVertex3f(1.0f, -1.0f, 1.0f);
-		gl.glColor3f(0.2f, 0.2f, 0.2f);
-		gl.glVertex3f(0.0f, -1.0f, -1.0f);
-		////////////////////
-		gl.glEnd();
+		// Second pyramid.
+		gl.glPushMatrix();
+		gl.glTranslatef(0.0f, 2.0f, 0.0f);
+		Pyramid.draw(drawable);
+		gl.glPopMatrix();
 		
-		Floor.draw(drawable);
+		// Third pyramid.
+		gl.glPushMatrix();
+		gl.glRotated(45.0f, 0.0f, 1.0f, 0.0f);
+		gl.glTranslatef(0.0f, 4.0f, 0.0f);
+		Pyramid.draw(drawable);
+		gl.glPopMatrix();
+		
+		// Draw room.
+		gl.glPushMatrix();
+		Room.draw(drawable);
+		gl.glPopMatrix();
+		
+		// Draw axe.
+		gl.glPushMatrix();
+		
+		gl.glPopMatrix();
 		
 		gl.glFlush();
 	}
 	
-	/*
-	public void displayOrig(GLAutoDrawable drawable) {
-		final GL2 gl = drawable.getGL().getGL2();
-		
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-		gl.glClear(GL2.GL_DEPTH_BUFFER_BIT);
-		
-		gl.glLoadIdentity();
-		gl.glTranslatef(0.0f, 0.0f, -10.0f);
-
-		gl.glRotatef(rotateT, 1.0f, 0.0f, 0.0f);
-		gl.glRotatef(rotateT, 0.0f, 1.0f, 0.0f);
-		gl.glRotatef(rotateT, 0.0f, 0.0f, 1.0f);
-		gl.glRotatef(rotateT, 0.0f, 1.0f, 0.0f);
-
-		gl.glBegin(GL2.GL_TRIANGLES);
-
-		// Front
-		gl.glColor3f(0.0f, 1.0f, 1.0f);
-		gl.glVertex3f(0.0f, 1.0f, 0.0f);
-		gl.glColor3f(0.0f, 0.0f, 1.0f);
-		gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-		gl.glColor3f(0.0f, 0.0f, 0.0f);
-		gl.glVertex3f(1.0f, -1.0f, 1.0f);
-
-		// Right Side Facing Front
-		gl.glColor3f(0.0f, 1.0f, 1.0f);
-		gl.glVertex3f(0.0f, 1.0f, 0.0f);
-		gl.glColor3f(0.0f, 0.0f, 1.0f);
-		gl.glVertex3f(1.0f, -1.0f, 1.0f);
-		gl.glColor3f(0.0f, 0.0f, 0.0f);
-		gl.glVertex3f(0.0f, -1.0f, -1.0f);
-
-		// Left Side Facing Front
-		gl.glColor3f(0.0f, 1.0f, 1.0f);
-		gl.glVertex3f(0.0f, 1.0f, 0.0f);
-		gl.glColor3f(0.0f, 0.0f, 1.0f);
-		gl.glVertex3f(0.0f, -1.0f, -1.0f);
-		gl.glColor3f(0.0f, 0.0f, 0.0f);
-		gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-
-		// Bottom
-		gl.glColor3f(0.0f, 0.0f, 0.0f);
-		gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-		gl.glColor3f(0.1f, 0.1f, 0.1f);
-		gl.glVertex3f(1.0f, -1.0f, 1.0f);
-		gl.glColor3f(0.2f, 0.2f, 0.2f);
-		gl.glVertex3f(0.0f, -1.0f, -1.0f);
-
-		gl.glEnd();
-		
-		rotateT += 0.05f;
-		
-	}
-	*/
-
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		GL2 gl = drawable.getGL().getGL2();
