@@ -18,6 +18,8 @@ import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
 
 import anne3D.Camera.Camera;
+import anne3D.Models.Axe;
+import anne3D.Models.Baby;
 import anne3D.Models.Pyramid;
 import anne3D.Models.Room;
 import anne3D.utilities.Logger;
@@ -73,23 +75,6 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	        final java.awt.Component comp = (java.awt.Component) drawable;
 	        new AWTKeyAdapter(this, drawable).addTo(comp);
 	    }
-	    
-        try {
-    		String babyTextureFilePath="resources/baby/StandingBabyDiffuseMap.jpg";
-    		String axeTextureFilePath = "resources/axe/axe.jpg";
-    		m_BabyTexture = TextureIO.newTexture(new File(babyTextureFilePath), true);
-    		m_AxeTexture = TextureIO.newTexture(new File(axeTextureFilePath), true);
-    		
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-        
-        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
-        gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
-        m_Baby = new WavefrontObjectLoader_DisplayList("resources\\baby\\baby.obj");
-        m_Axe = new WavefrontObjectLoader_DisplayList("resources\\axe\\axe_v1.obj");
-	    Logger.Debug("Done init.");
 	}
 
 	@Override
@@ -128,26 +113,7 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		Camera camera = Camera.getInstance();
 		moveCamera();
 		rotateCamera();
-		/*
-        //gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
-        //gl.glLoadIdentity();  // Reset The View
-        gl.glTranslatef(0.0f, 0.0f, -2.0f);
-
-        gl.glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
-        gl.glRotatef(0.0f, 0.0f, 1.0f, 0.0f);
-        gl.glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
-        
-        gl.glTexParameteri ( GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT );
-        gl.glTexParameteri( GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT );
-        m_AxeTexture.bind(gl);
-        //m_BabyTexture.bind(gl);
-        gl.glScalef(100, 100, 100);
-        m_Axe.drawModel(gl);
-        
-        //m_Baby.drawModel(gl);
-         * */
-		
-		
+				
 		g_glu.gluLookAt(
 			// Position of camera.
 			camera.Position.X,
@@ -182,11 +148,26 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		gl.glPushMatrix();
 		Room.draw(drawable);
 		gl.glPopMatrix();
+				
+		// Draw baby.
+		gl.glPushMatrix();
+		gl.glTranslatef(0.0f, 0.0f, -10.0f);
+		gl.glScalef(0.1f, 0.1f, 0.1f);
+		gl.glRotated(-90.0f, 1.0f, 0.0f, 0.0f);
+		Baby.draw(drawable);
+		gl.glPopMatrix();
 		
 		// Draw axe.
 		gl.glPushMatrix();
-		
+        gl.glTranslatef(0.0f, 0.0f, -2.0f);
+        gl.glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
+        gl.glRotatef(0.0f, 0.0f, 1.0f, 0.0f);
+        gl.glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
+        gl.glScalef(50, 50, 50);
+		Axe.draw(drawable);
 		gl.glPopMatrix();
+		
+
 		
 		gl.glFlush();
 	}

@@ -68,11 +68,7 @@ public class WavefrontObjectLoader_DisplayList {
                     br = new BufferedReader(new InputStreamReader(tZipInputStream));
                 }
             } else {
-            	Object obj = new Object();
-            	System.out.println("Working Directory = " + System.getProperty("user.dir"));
-            	//File initialFile = new File("C:\\Users\\galsh\\eclipse-workspace\\Anne3D\\resources\\axe_v1.obj");
                 InputStream targetStream = new FileInputStream(ModelPath);
-            	//InputStream	myis = this.getClass().getResourceAsStream(ModelPath);
             	InputStreamReader isr = new InputStreamReader(targetStream);
                 br = new BufferedReader(isr);
             }

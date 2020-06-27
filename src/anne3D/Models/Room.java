@@ -14,6 +14,7 @@ final public class Room {
 	public static void draw(GLAutoDrawable drawable) {
 		final GL2 gl = drawable.getGL().getGL2();
 		Camera camera = Camera.getInstance();
+		gl.glPushAttrib(GL2.GL_CURRENT_BIT);
 		// Floor.
 		gl.glBegin(GL2.GL_TRIANGLES);
 		gl.glColor3f((float)camera.U.X, (float)camera.U.Y, (float)camera.U.Z);
@@ -65,5 +66,7 @@ final public class Room {
 		gl.glVertex3f(-10, g_CeilingHeight, -10);
 		gl.glVertex3f(-10, g_CeilingHeight, 10);
 		gl.glEnd();
+		
+		gl.glPopAttrib();
 	}
 }
