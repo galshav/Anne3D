@@ -3,13 +3,24 @@ package anne3D.Models;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 
-final public class Pyramid {
+import anne3D.math.Vector3;
+
+final public class Pyramid extends Entity{
 	
 	private static final float g_DiffBetweenFloorAndCeiling = 10;
 	public static final float g_FloorHeight = -1f;
 	public static final float g_CeilingHeight = g_FloorHeight + g_DiffBetweenFloorAndCeiling;
 	
-	public static void draw(GLAutoDrawable drawable) {
+	public Pyramid(
+			final Vector3 translationSettings,
+			final double rotationAngle,
+			final Vector3 rotationSettings) {
+		TranslationSettings = translationSettings;
+		AngleOfRotation = rotationAngle;
+		RotationSettings = rotationSettings;
+	}
+	
+	public void draw(final GLAutoDrawable drawable) {
 		final GL2 gl = drawable.getGL().getGL2();
 		gl.glBegin(GL2.GL_TRIANGLES);		
 		// Front

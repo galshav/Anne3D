@@ -22,9 +22,9 @@ final public class Camera {
 	public Vector3 V; 
 	public Vector3 W; 
 
-	private double m_RotationAngleRelativeToU = 0;
-	private double m_RotationAngleRelativeToV = 0;
-	private double m_RotationAngleRelativeToW = 0;
+	public double m_RotationAngleRelativeToU = 0;
+	public double m_RotationAngleRelativeToV = 0;
+	public double m_RotationAngleRelativeToW = 0;
 	
 	private Camera() {
 		Position = new Vector3(0, 0, 3);

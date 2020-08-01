@@ -1,7 +1,7 @@
 package anne3D.Demo;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 
 import com.jogamp.newt.Window;
 import com.jogamp.newt.event.KeyAdapter;
@@ -20,8 +20,12 @@ import com.jogamp.opengl.util.texture.TextureIO;
 import anne3D.Camera.Camera;
 import anne3D.Models.Axe;
 import anne3D.Models.Baby;
+import anne3D.Models.Entity;
+import anne3D.Models.Pig;
 import anne3D.Models.Pyramid;
 import anne3D.Models.Room;
+import anne3D.math.Vector2;
+import anne3D.math.Vector3;
 import anne3D.utilities.Logger;
 
 public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
@@ -33,6 +37,10 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	private Texture m_AxeTexture;
     private WavefrontObjectLoader_DisplayList m_Baby;
     private WavefrontObjectLoader_DisplayList m_Axe;
+    
+    // Dynamic lists of entities to be drawn.
+    private ArrayList<Entity> m_Diamonds;
+    private ArrayList<Entity> m_Babies;
 	
 	// Move camera properties.
 	private final double m_MovementFactor = 0.02;
@@ -52,8 +60,15 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	private double m_TiltRightSpeed = 0;
 	private double m_TiltLeftSpeed = 0;
 	
+	// Diamonds settings.
+	private float m_DiamondRotationFactor = 0.2f;
+	
+	// Utils.
+	private Random rand = null;
+	
 	@Override
 	public void init(GLAutoDrawable drawable) {
+		
 		// Initialize camera singleton.
 		final Camera camera = Camera.getInstance();
 		final GL2 gl = drawable.getGL().getGL2();
@@ -63,10 +78,13 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		gl.glClearDepth(1.0f); // Depth Buffer Setup
 		gl.glEnable(GL2.GL_DEPTH_TEST); // Enables Depth Testing
 		gl.glDepthFunc(GL2.GL_LEQUAL); // The Type Of Depth Testing To Do
-		//gl.glEnable(GL2.GL_TEXTURE_2D);
+		gl.glEnable(GL2.GL_TEXTURE_2D);
 		// Really Nice Perspective Calculations
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
 
+		rand = new Random();
+		initModels();
+		
 		// keyboard
 	    if (drawable instanceof Window) {
 	        final Window window = (Window) drawable;
@@ -76,6 +94,32 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	        new AWTKeyAdapter(this, drawable).addTo(comp);
 	    }
 	}
+	
+	private final void initModels() {
+		m_Diamonds = new ArrayList<Entity>();
+		m_Diamonds.add(new Pyramid(
+				new Vector3(0.0f, 0.0f, 0.0f),
+				35.0f,
+				new Vector3(0.0f, 1.0f, 0.0f)));
+		m_Diamonds.add(new Pyramid(
+				new Vector3(0.0f, 2.0f, 0.0f),
+				70.0f,
+				new Vector3(0.0f, 1.0f, 0.0f)));
+		m_Diamonds.add(new Pyramid(
+				new Vector3(0.0f, 4.0f, 0.0f),
+				0,
+				new Vector3(0.0f, 1.0f, 0.0f)));
+		
+		m_Babies = new ArrayList<Entity>();
+		m_Babies.add(new Baby(
+				new Vector3(5.0f, -1.0f, -7.0f),
+				-90.0f,
+				new Vector3(1.0f, 0.0f, 0.0f)));
+		m_Babies.add(new Baby(
+				new Vector3(0.0f, -1.0f, -5.0f),
+				-90.0f,
+				new Vector3(1.0f, 0.0f, 0.0f)));
+	}
 
 	@Override
 	public void dispose(GLAutoDrawable drawable) {
@@ -83,7 +127,31 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	}
 
 	private void moveCamera() {
-		final Camera camera = Camera.getInstance();
+		final Camera camera = Camera.getInstance();		
+		if (camera.Position.X > 9) {
+			camera.Position.X = 9;
+		}
+		
+		else if (camera.Position.X < -9) {
+			camera.Position.X = -9;
+		}
+		
+		else if (camera.Position.Y > 8) {
+			camera.Position.Y = 8;
+		}
+		
+		else if (camera.Position.Y < 0) {
+			camera.Position.Y = 0;
+		}
+		
+		else if (camera.Position.Z > 9) {
+			camera.Position.Z = 9;
+		}
+		
+		else if (camera.Position.Z < -9) {
+			camera.Position.Z = -9;
+		}
+		
 		camera.move(Camera.AXIS.U, m_MoveRightSpeed);
 		camera.move(Camera.AXIS.U, m_MoveLeftSpeed);
 		camera.move(Camera.AXIS.V, m_MoveUpSpeed);
@@ -102,8 +170,45 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		camera.rotate(Camera.AXIS.W, m_TiltLeftSpeed);
 	}
 	
-	@Override
-	public void display(GLAutoDrawable drawable) {
+	private void updateDiamonds() {
+		for (final Entity diamond : m_Diamonds) {
+			diamond.AngleOfRotation += m_DiamondRotationFactor;
+		}
+	}
+	
+	private void updateBabies() {
+		for (final Entity baby : m_Babies) {
+			rand.nextDouble();
+			baby.TranslationSettings.X += rand.nextGaussian() / 8;
+			baby.TranslationSettings.Z += rand.nextGaussian() / 8;
+			if (baby.TranslationSettings.X > 9) {
+				baby.TranslationSettings.X = 9;
+			}
+			
+			else if (baby.TranslationSettings.X < -9) {
+				baby.TranslationSettings.X = -9;
+			}
+			
+			else if (baby.TranslationSettings.Z > 9) {
+				baby.TranslationSettings.Z = 9;
+			}
+			
+			else if (baby.TranslationSettings.Z < -9) {
+				baby.TranslationSettings.Z = -9;
+			}
+		}
+	}
+	
+	private void updateGameLogic() {
+		moveCamera();
+		rotateCamera();
+		updateDiamonds();
+		updateBabies();
+		CheckCollisionWithDiamonds();
+		CheckCollisionWithBabies();
+	}
+	
+	private void renderGraphics(GLAutoDrawable drawable) {
 		final GL2 gl = drawable.getGL().getGL2();
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
@@ -111,65 +216,86 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		Camera camera = Camera.getInstance();
-		moveCamera();
-		rotateCamera();
-				
 		g_glu.gluLookAt(
-			// Position of camera.
-			camera.Position.X,
-			camera.Position.Y,
-			camera.Position.Z,
-			// Where to look at.
-			camera.Position.X - camera.W.X,
-			camera.Position.Y - camera.W.Y,
-			camera.Position.Z - camera.W.Z,
-			// Up vector.
-			camera.V.X, camera.V.Y, camera.V.Z);
+				// Position of camera.
+				camera.Position.X,
+				camera.Position.Y,
+				camera.Position.Z,
+				// Where to look at.
+				camera.Position.X - camera.W.X,
+				camera.Position.Y - camera.W.Y,
+				camera.Position.Z - camera.W.Z,
+				// Up vector.
+				camera.V.X, camera.V.Y, camera.V.Z);
+			
+		// Draw collection of diamonds.
+		for (Entity diamond : m_Diamonds) {
+			if (diamond.IsActive) {				
+				gl.glPushMatrix();
+				gl.glTranslated(diamond.TranslationSettings.X, diamond.TranslationSettings.Y, diamond.TranslationSettings.Z);
+				gl.glScalef(-0.5f, -0.5f, -0.5f);
+				gl.glRotated(diamond.AngleOfRotation, diamond.RotationSettings.X, diamond.RotationSettings.Y, diamond.RotationSettings.Z);
+				diamond.draw(drawable);
+				gl.glPopMatrix();
+			}
+		}
 		
-		// First pyramid.
-		gl.glPushMatrix();
-		Pyramid.draw(drawable);
-		gl.glPopMatrix();
+		// Draw enemy babies.
+		for (Entity baby : m_Babies) {
+			gl.glPushMatrix();
+			gl.glTranslated(baby.TranslationSettings.X, baby.TranslationSettings.Y, baby.TranslationSettings.Z);
+			gl.glScalef(0.1f, 0.1f, 0.1f);
+			gl.glRotated(baby.AngleOfRotation, baby.RotationSettings.X, baby.RotationSettings.Y, baby.RotationSettings.Z);
+			baby.draw(drawable);
+			gl.glPopMatrix();
+		}
 		
-		// Second pyramid.
-		gl.glPushMatrix();
-		gl.glTranslatef(0.0f, 2.0f, 0.0f);
-		Pyramid.draw(drawable);
-		gl.glPopMatrix();
-		
-		// Third pyramid.
-		gl.glPushMatrix();
-		gl.glRotated(45.0f, 0.0f, 1.0f, 0.0f);
-		gl.glTranslatef(0.0f, 4.0f, 0.0f);
-		Pyramid.draw(drawable);
-		gl.glPopMatrix();
-		
-		// Draw room.
+		// Draw first room.
 		gl.glPushMatrix();
 		Room.draw(drawable);
 		gl.glPopMatrix();
-				
-		// Draw baby.
-		gl.glPushMatrix();
-		gl.glTranslatef(0.0f, 0.0f, -10.0f);
-		gl.glScalef(0.1f, 0.1f, 0.1f);
-		gl.glRotated(-90.0f, 1.0f, 0.0f, 0.0f);
-		Baby.draw(drawable);
-		gl.glPopMatrix();
 		
-		// Draw axe.
+		// Draw second room.
 		gl.glPushMatrix();
-        gl.glTranslatef(0.0f, 0.0f, -2.0f);
-        gl.glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
-        gl.glRotatef(0.0f, 0.0f, 1.0f, 0.0f);
-        gl.glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
-        gl.glScalef(50, 50, 50);
-		Axe.draw(drawable);
+		gl.glTranslated(-20, 0, 0);
+		Room.draw(drawable);
 		gl.glPopMatrix();
-		
-
 		
 		gl.glFlush();
+	}
+	
+	private void CheckCollisionWithDiamonds() {
+		Camera camera = Camera.getInstance();
+		Vector3 cameraPosition = new Vector3(camera.Position.X, camera.Position.Y, camera.Position.Z);
+		for (Entity entity : m_Diamonds) {
+			if (cameraPosition.minus(entity.TranslationSettings).size() < 1.5) {
+				entity.IsActive = false;
+			}
+		}
+	}
+	
+	private void CheckCollisionWithBabies() {
+		Camera camera = Camera.getInstance();
+		Vector3 cameraPosition = new Vector3(camera.Position.X, camera.Position.Y, camera.Position.Z);
+		for (Entity entity : m_Babies) {
+			Vector3 babyPosition = new Vector3(
+					entity.TranslationSettings.X,
+					entity.TranslationSettings.Y,
+					entity.TranslationSettings.Z);
+			if (cameraPosition.minus(babyPosition).size() < 2.5) {
+				Logger.Info("You are dead!");
+				entity.IsActive = false;
+			}
+		}
+	}
+	
+	@Override
+	public void display(GLAutoDrawable drawable) {	
+		// Update physics.
+		updateGameLogic();
+
+		// Render logic.
+		renderGraphics(drawable);
 	}
 	
 	@Override

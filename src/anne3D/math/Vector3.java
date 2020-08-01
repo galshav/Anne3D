@@ -34,6 +34,13 @@ public class Vector3 extends ColumnVector {
 				result.getValue(2, 0));
 	}
 	
+	/*
+	public Vector3 minus(final Vector3 other) {
+		return new Vector3(this.X - other.X, this.Y = other.Y, this.Z - other.Z);
+		
+	}
+	*/
+	
 	@Override
 	public Vector3 plus(final Matrix other) {
 		Matrix result = super.plus(other);
