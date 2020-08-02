@@ -41,6 +41,13 @@ final public class Camera {
 		return m_instance;
 	}
 	
+	public void resetCameraView() {
+		Position = new Vector3(0, 0, 3);
+		U = new Vector3(1, 0 ,0);
+		V = new Vector3(0, 1, 0);
+		W = new Vector3(0, 0, 1);
+	}
+	
 	public void rotate(final AXIS axis, final double angleInDeg) {
 		if (0 == angleInDeg) {
 			return;

@@ -1,5 +1,7 @@
 package anne3D.Demo;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -13,6 +15,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
@@ -32,11 +35,6 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	
 	static private GLU g_glu;
 	static private GLUT g_glut;
-	
-	private Texture m_BabyTexture;
-	private Texture m_AxeTexture;
-    private WavefrontObjectLoader_DisplayList m_Baby;
-    private WavefrontObjectLoader_DisplayList m_Axe;
     
     // Dynamic lists of entities to be drawn.
     private ArrayList<Entity> m_Diamonds;
@@ -63,8 +61,15 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	// Diamonds settings.
 	private float m_DiamondRotationFactor = 0.2f;
 	
-	// Utils.
+	// Game settings.
+	private boolean m_Running = true;
 	private Random rand = null;
+	private long m_TimeStep = 0;
+	private TextRenderer m_TextRenderer = null;
+	private int m_Score = 0;
+	private int m_Lives = 3;
+	private int m_NumberOfBabies = 1;
+	private int m_NumberOfDiamonds = 3;
 	
 	@Override
 	public void init(GLAutoDrawable drawable) {
@@ -83,7 +88,12 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
 
 		rand = new Random();
-		initModels();
+		m_TimeStep = System.nanoTime();
+		m_TextRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 36));
+		m_Score = 0;
+		m_Lives = 3;
+		m_Running = true;
+		updateLevel();
 		
 		// keyboard
 	    if (drawable instanceof Window) {
@@ -95,30 +105,19 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	    }
 	}
 	
-	private final void initModels() {
-		m_Diamonds = new ArrayList<Entity>();
-		m_Diamonds.add(new Pyramid(
-				new Vector3(0.0f, 0.0f, 0.0f),
-				35.0f,
-				new Vector3(0.0f, 1.0f, 0.0f)));
-		m_Diamonds.add(new Pyramid(
-				new Vector3(0.0f, 2.0f, 0.0f),
-				70.0f,
-				new Vector3(0.0f, 1.0f, 0.0f)));
-		m_Diamonds.add(new Pyramid(
-				new Vector3(0.0f, 4.0f, 0.0f),
-				0,
-				new Vector3(0.0f, 1.0f, 0.0f)));
-		
-		m_Babies = new ArrayList<Entity>();
-		m_Babies.add(new Baby(
-				new Vector3(5.0f, -1.0f, -7.0f),
-				-90.0f,
-				new Vector3(1.0f, 0.0f, 0.0f)));
-		m_Babies.add(new Baby(
-				new Vector3(0.0f, -1.0f, -5.0f),
-				-90.0f,
-				new Vector3(1.0f, 0.0f, 0.0f)));
+	private void DrawText(
+			GLAutoDrawable drawable, 
+			final String text,
+			final int x,
+			final int y,
+			final Color color) {
+		final GL2 gl = drawable.getGL().getGL2();
+		gl.glPushAttrib(gl.GL_QUADS);
+		m_TextRenderer.beginRendering(drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
+		m_TextRenderer.setColor(color);
+		m_TextRenderer.draw(text, x, y);
+		m_TextRenderer.endRendering();
+		gl.glPopAttrib();
 	}
 
 	@Override
@@ -199,13 +198,36 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		}
 	}
 	
-	private void updateGameLogic() {
+	private void updateGameLogic(final long deltaTime) {
 		moveCamera();
 		rotateCamera();
 		updateDiamonds();
 		updateBabies();
 		CheckCollisionWithDiamonds();
 		CheckCollisionWithBabies();
+	}
+	
+	private void updateLevel() {
+		Camera camera = Camera.getInstance();
+		camera.resetCameraView();
+		m_Diamonds = new ArrayList<Entity>();
+		
+		for (int i = 0; i < m_NumberOfDiamonds; ++i) {
+			int x = rand.nextInt(20) - 10;
+			int z = rand.nextInt(20) - 10;
+			m_Diamonds.add(new Pyramid(
+					new Vector3(x, 0.0f, z),
+					35.0f,
+					new Vector3(0.0f, 1.0f, 0.0f)));
+		}
+				
+		m_Babies = new ArrayList<Entity>();
+		for (int i = 0; i < m_NumberOfBabies; ++i) {
+			m_Babies.add(new Baby(
+					new Vector3(0.0f, -1.0f, -9.0f),
+					-90.0f,
+					new Vector3(1.0f, 0.0f, 0.0f)));
+		}
 	}
 	
 	private void renderGraphics(GLAutoDrawable drawable) {
@@ -227,7 +249,7 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 				camera.Position.Z - camera.W.Z,
 				// Up vector.
 				camera.V.X, camera.V.Y, camera.V.Z);
-			
+		
 		// Draw collection of diamonds.
 		for (Entity diamond : m_Diamonds) {
 			if (diamond.IsActive) {				
@@ -254,13 +276,8 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		gl.glPushMatrix();
 		Room.draw(drawable);
 		gl.glPopMatrix();
-		
-		// Draw second room.
-		gl.glPushMatrix();
-		gl.glTranslated(-20, 0, 0);
-		Room.draw(drawable);
-		gl.glPopMatrix();
-		
+				
+		DrawText(drawable, String.format("Level: %d", m_NumberOfBabies), 20, 20, Color.BLACK);
 		gl.glFlush();
 	}
 	
@@ -268,9 +285,19 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		Camera camera = Camera.getInstance();
 		Vector3 cameraPosition = new Vector3(camera.Position.X, camera.Position.Y, camera.Position.Z);
 		for (Entity entity : m_Diamonds) {
-			if (cameraPosition.minus(entity.TranslationSettings).size() < 1.5) {
-				entity.IsActive = false;
+			if (entity.IsActive) {
+				if (cameraPosition.minus(entity.TranslationSettings).size() < 1.5) {
+					m_Score += 1;
+					entity.IsActive = false;
+					m_NumberOfDiamonds--;
+				}
 			}
+		}
+		
+		if (0 == m_NumberOfDiamonds) {
+			m_NumberOfDiamonds = 3;
+			m_NumberOfBabies++;
+			updateLevel();
 		}
 	}
 	
@@ -283,16 +310,31 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 					entity.TranslationSettings.Y,
 					entity.TranslationSettings.Z);
 			if (cameraPosition.minus(babyPosition).size() < 2.5) {
-				Logger.Info("You are dead!");
+				m_Running = false;
 				entity.IsActive = false;
 			}
 		}
 	}
 	
 	@Override
-	public void display(GLAutoDrawable drawable) {	
+	public void display(GLAutoDrawable drawable) {
+		if (!m_Running) {
+			DrawText(
+				drawable,
+				"You are dead!",
+				drawable.getSurfaceWidth() / 2,
+				drawable.getSurfaceHeight() / 2,
+				Color.RED);
+			GL2 gl = drawable.getGL().getGL2();
+			return;
+		}
+		
+		//long currentTime = System.nanoTime();
+		//long deltaTime = currentTime - m_TimeStep;
+		//m_TimeStep = currentTime;
+		
 		// Update physics.
-		updateGameLogic();
+		updateGameLogic(0);
 
 		// Render logic.
 		renderGraphics(drawable);
@@ -370,6 +412,12 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 			
 		case KeyEvent.VK_U:
 			m_TiltLeftSpeed = -m_RotationFactor;
+			break;
+			
+		case KeyEvent.VK_F2:
+			m_NumberOfBabies++;
+			m_NumberOfDiamonds = 3;
+			updateLevel();
 			break;
 			
 		default:

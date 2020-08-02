@@ -67,6 +67,21 @@ final public class Room {
 		gl.glVertex3f(-10, g_CeilingHeight, 10);
 		gl.glEnd();
 		
+		// Wall #3
+		gl.glBegin(GL2.GL_TRIANGLES);
+		gl.glColor3f((float)camera.V.Z, (float)camera.V.Z, (float)camera.V.Z);
+		gl.glVertex3f(-10, g_FloorHeight, -10);
+		gl.glVertex3f(10, g_FloorHeight, -10);
+		gl.glVertex3f(-10, g_CeilingHeight, -10);
+		gl.glEnd();
+		gl.glBegin(GL2.GL_TRIANGLES);
+		gl.glVertex3f(10, g_FloorHeight, -10);
+		gl.glVertex3f(10, g_CeilingHeight, -10);
+		gl.glVertex3f(-10, g_CeilingHeight, -10);
+		gl.glEnd();
+		
+		
+		
 		gl.glPopAttrib();
 	}
 }
