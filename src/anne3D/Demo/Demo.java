@@ -69,7 +69,8 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	private int m_Score = 0;
 	private int m_Lives = 3;
 	private int m_NumberOfBabies = 1;
-	private int m_NumberOfDiamonds = 3;
+	private static int g_INITIAL_NUMBER_OF_DIAMONDS = 5;
+	private int m_NumberOfDiamonds = g_INITIAL_NUMBER_OF_DIAMONDS;
 	
 	@Override
 	public void init(GLAutoDrawable drawable) {
@@ -277,7 +278,7 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		Room.draw(drawable);
 		gl.glPopMatrix();
 				
-		DrawText(drawable, String.format("Level: %d", m_NumberOfBabies), 20, 20, Color.BLACK);
+		DrawText(drawable, String.format("Level: %d", m_NumberOfBabies), 20, 20, Color.RED);
 		gl.glFlush();
 	}
 	
@@ -295,7 +296,7 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		}
 		
 		if (0 == m_NumberOfDiamonds) {
-			m_NumberOfDiamonds = 3;
+			m_NumberOfDiamonds = g_INITIAL_NUMBER_OF_DIAMONDS;
 			m_NumberOfBabies++;
 			updateLevel();
 		}
@@ -416,13 +417,13 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		// Proceed to next level.
 		case KeyEvent.VK_F2:
 			m_NumberOfBabies++;
-			m_NumberOfDiamonds = 3;
+			m_NumberOfDiamonds = g_INITIAL_NUMBER_OF_DIAMONDS;
 			updateLevel();
 			break;
 			
 		// Reset game back to level 1.
 		case KeyEvent.VK_R:
-			m_NumberOfDiamonds = 3;
+			m_NumberOfDiamonds = g_INITIAL_NUMBER_OF_DIAMONDS;
 			m_NumberOfBabies = 1;
 			updateLevel();
 			m_Running = true;
