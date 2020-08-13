@@ -272,7 +272,7 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 			gl.glPopMatrix();
 		}
 		
-		// Draw first room.
+		// Draw room.
 		gl.glPushMatrix();
 		Room.draw(drawable);
 		gl.glPopMatrix();
@@ -325,7 +325,6 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 				drawable.getSurfaceWidth() / 2,
 				drawable.getSurfaceHeight() / 2,
 				Color.RED);
-			GL2 gl = drawable.getGL().getGL2();
 			return;
 		}
 		
@@ -414,11 +413,19 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 			m_TiltLeftSpeed = -m_RotationFactor;
 			break;
 			
+		// Proceed to next level.
 		case KeyEvent.VK_F2:
 			m_NumberOfBabies++;
 			m_NumberOfDiamonds = 3;
 			updateLevel();
 			break;
+			
+		// Reset game back to level 1.
+		case KeyEvent.VK_R:
+			m_NumberOfDiamonds = 3;
+			m_NumberOfBabies = 1;
+			updateLevel();
+			m_Running = true;
 			
 		default:
 			break;
