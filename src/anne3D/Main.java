@@ -44,7 +44,8 @@ final public class Main {
 	
 	public static void launch_jogl(final String[] args) {
 		Frame frame = new Frame(g_TITLE);
-		frame.setSize(800, 600);
+		frame.setSize(frame.getMaximumSize().width, frame.getMaximumSize().height);
+		//frame.getMaximumSize().
 		final Animator animator = new Animator();
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {
 			public void windowClosing(java.awt.event.WindowEvent e) {

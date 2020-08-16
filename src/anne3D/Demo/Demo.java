@@ -63,6 +63,7 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	
 	// Game settings.
 	private boolean m_Running = true;
+	private boolean m_DisplayInfo = false;
 	private Random rand = null;
 	private long m_TimeStep = 0;
 	private TextRenderer m_TextRenderer = null;
@@ -96,6 +97,15 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		m_Running = true;
 		updateLevel();
 		
+		// Light.
+    	float ambient[] = {0.5f,0.5f,0.5f,0.0f};
+    	float diffuse0[] = {0.1f,0.1f,0.1f,1.0f};
+    	gl.glShadeModel(GL2.GL_SMOOTH);
+    	gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, ambient, 0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuse0, 0);
+        gl.glEnable(GL2.GL_LIGHT0);
+        gl.glEnable(GL2.GL_LIGHTING);
+        
 		// keyboard
 	    if (drawable instanceof Window) {
 	        final Window window = (Window) drawable;
@@ -278,7 +288,7 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 		Room.draw(drawable);
 		gl.glPopMatrix();
 				
-		DrawText(drawable, String.format("Level: %d", m_NumberOfBabies), 20, 20, Color.RED);
+		DrawText(drawable, String.format("Level: %d", m_NumberOfBabies), 20, 200, Color.RED);
 		gl.glFlush();
 	}
 	
@@ -319,6 +329,23 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 	
 	@Override
 	public void display(GLAutoDrawable drawable) {
+		if (m_DisplayInfo) {
+			DrawText(
+				drawable,
+				"AnneEscape: Collect the diamonds, escape the babies.",
+				drawable.getSurfaceWidth() / 10,
+				drawable.getSurfaceHeight() / 3,
+				Color.GREEN);
+			DrawText(
+					drawable,
+					"R - Reset, B - Back to game.",
+					drawable.getSurfaceWidth() / 10,
+					drawable.getSurfaceHeight() / 2,
+					Color.GREEN);
+			
+			return;
+		}
+		
 		if (!m_Running) {
 			DrawText(
 				drawable,
@@ -427,6 +454,18 @@ public class Demo extends KeyAdapter implements GLEventListener, KeyListener{
 			m_NumberOfBabies = 1;
 			updateLevel();
 			m_Running = true;
+			m_DisplayInfo = false;
+			break;
+			
+		// Display information.
+		case KeyEvent.VK_F1:
+			m_DisplayInfo = true;
+			break;
+			
+		// Exit display info.
+		case KeyEvent.VK_B:
+			m_DisplayInfo = false;
+			break;
 			
 		default:
 			break;

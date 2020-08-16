@@ -35,17 +35,21 @@ final public class Room {
 	
 	public static void draw(GLAutoDrawable drawable) {
 		final GL2 gl = drawable.getGL().getGL2();
-		Camera camera = Camera.getInstance();
+		float material[] = {0.8f,0.8f,0.8f,1.0f};
+    	float position[] = {0.0f,0.0f,-9.0f,1.0f};
+    	gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, position, 0);
+    	gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT_AND_DIFFUSE, material, 0);
+    	
 		gl.glPushAttrib(GL2.GL_CURRENT_BIT);
 		// Floor.
 		gl.glEnable(GL2.GL_TEXTURE_2D); /**/
 		texture.bind(gl);
+		gl.glNormal3f(0.0f, 1.0f, 0.0f);
 		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
         gl.glBegin(GL2.GL_TRIANGLES);
-        gl.glColor3f((float)camera.W.X, (float)camera.W.Y, (float)camera.W.Z);
         gl.glTexCoord2f(0.0f, 0.0f);
 		gl.glVertex3f(10, g_FloorHeight, 10);
 		gl.glTexCoord2f(2f, 0.0f);
@@ -67,12 +71,12 @@ final public class Room {
 		// Ceiling.
 		gl.glEnable(GL2.GL_TEXTURE_2D); /**/
 		texture.bind(gl);
+		gl.glNormal3f(0.0f, -1.0f, 0.0f);
 		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
 		gl.glBegin(GL2.GL_TRIANGLES);
-		gl.glColor3f((float)camera.U.X, (float)camera.U.Y, (float)camera.U.Z);
 		gl.glTexCoord2f(0.0f, 0.0f);
 		gl.glVertex3f(10, g_CeilingHeight, 10);
 		gl.glTexCoord2f(2f, 0.0f);
@@ -90,16 +94,15 @@ final public class Room {
 		gl.glEnd();
 		texture.disable(gl);
 		
-		// Wall #1
+		// Right wall
 		gl.glEnable(GL2.GL_TEXTURE_2D); /**/
 		texture2.bind(gl);
+		gl.glNormal3f(-1.0f, 0.0f, 0.0f);
 		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
 		gl.glBegin(GL2.GL_TRIANGLES);
-		//gl.glColor3f((float)camera.V.X, (float)camera.V.Y, (float)camera.V.Z);
-		gl.glColor3f(1.0f, 1.0f, 1.0f);
 		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3f(10, g_FloorHeight, 10);
 		gl.glTexCoord2f(0.0f, 0.0f);
@@ -117,16 +120,15 @@ final public class Room {
 		gl.glEnd();
 		texture2.disable(gl);
 		
-		// Wall #2
+		// Left wall.
 		gl.glEnable(GL2.GL_TEXTURE_2D); /**/
 		texture3.bind(gl);
+		gl.glNormal3f(1.0f, 0.0f, 0.0f);
 		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
 		gl.glBegin(GL2.GL_TRIANGLES);
-		//gl.glColor3f((float)camera.V.X, (float)camera.V.Y, (float)camera.V.Z);
-		gl.glColor3f(1.0f, 1.0f, 1.0f);
 		gl.glTexCoord2f(0.0f, 0.0f);
 		gl.glVertex3f(-10, g_FloorHeight, 10);
 		gl.glTexCoord2f(1.0f, 0.0f);
@@ -144,15 +146,15 @@ final public class Room {
 		gl.glEnd();
 		texture3.disable(gl);
 		
-		// Wall #3
+		// Front wall.
 		gl.glEnable(GL2.GL_TEXTURE_2D); /**/
 		texture.bind(gl);
+		gl.glNormal3f(0.0f, 0.0f, 1.0f);
 		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D,GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
 		gl.glBegin(GL2.GL_TRIANGLES);
-		gl.glColor3f(1.0f, 1.0f, 1.0f);
 		gl.glTexCoord2f(0.0f, 0.0f);
 		gl.glVertex3f(-10, g_FloorHeight, -10);
 		gl.glTexCoord2f(1.0f, 0.0f);
